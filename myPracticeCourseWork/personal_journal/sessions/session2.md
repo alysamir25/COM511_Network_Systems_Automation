@@ -159,6 +159,7 @@ applicable law.
 To run a command as administrator (user "root"), use "sudo <command>".
 See "man sudo_root" for details.
 
+```
 ansible@ubuntu-1:~$ exit
 logout
 Connection to 192.168.56.20 closed.
@@ -199,6 +200,7 @@ drwx------ 2 vagrant vagrant 4096 Oct  7 09:58 .ssh
 -rw-r--r-- 1 vagrant vagrant    0 Oct 23  2025 .sudo_as_admin_successful
 -rw-r--r-- 1 vagrant vagrant    5 Oct 23  2025 .vbox_version
 root@ansible-controller:/home/vagrant#
+```
 
 ########################################################################
 
