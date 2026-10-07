@@ -624,6 +624,94 @@ Origin: <adhoc 'ping' task>
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
 #################################################################################
+Trying another solution:
+Deleted .ssh-ansible and .vagrant files and restarting all of the 3 machines again, let's see if this will fix it
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ping 192.168.56.20
+PING 192.168.56.20 (192.168.56.20) 56(84) bytes of data.
+64 bytes from 192.168.56.20: icmp_seq=1 ttl=64 time=5.78 ms
+64 bytes from 192.168.56.20: icmp_seq=2 ttl=64 time=2.64 ms
+64 bytes from 192.168.56.20: icmp_seq=3 ttl=64 time=3.71 ms
+64 bytes from 192.168.56.20: icmp_seq=4 ttl=64 time=1.85 ms
+64 bytes from 192.168.56.20: icmp_seq=5 ttl=64 time=2.25 ms
+64 bytes from 192.168.56.20: icmp_seq=6 ttl=64 time=2.78 ms
+^C
+--- 192.168.56.20 ping statistics ---
+6 packets transmitted, 6 received, 0% packet loss, time 5017ms
+rtt min/avg/max/mdev = 1.849/3.166/5.780/1.299 ms
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ exit
+exit
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ exit
+exit
+ansible@ansible-controller:/home/vagrant$ exit
+exit
+vagrant@ansible-controller:~$ exit
+logout
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> ls
+
+
+    Directory: C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracti
+    ceCourseWork\session2\vagrant-examples\example2-2
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        07/10/2026     10:28                .ssh-ansible
+d-----        07/10/2026     10:57                .vagrant
+d-----        07/10/2026     10:28                ansible
+-a----        07/10/2026     10:27           1219 generate-ansible-ssh.sh
+-a----        07/10/2026     10:27            995 provision-users-rhel.sh
+-a----        07/10/2026     10:27            993 provision-users-ubuntu.sh
+-a----        07/10/2026     10:27           3980 README.md
+-a----        07/10/2026     10:27           4853 Vagrantfile
+
+
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> vagrant destroy
+    rocky_1: Are you sure you want to destroy the 'rocky_1' VM? [y/N] y
+==> rocky_1: Forcing shutdown of VM...
+==> rocky_1: Destroying VM and associated drives...
+    ubuntu_1: Are you sure you want to destroy the 'ubuntu_1' VM? [y/N] y
+==> ubuntu_1: Forcing shutdown of VM...
+==> ubuntu_1: Destroying VM and associated drives...
+    ansible_controller: Are you sure you want to destroy the 'ansible_controller' VM? [y/N] y
+==> ansible_controller: Forcing shutdown of VM...
+==> ansible_controller: Destroying VM and associated drives...
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> rm .\.ssh-ansible\
+
+Confirm
+The item at
+C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\se
+ssion2\vagrant-examples\example2-2\.ssh-ansible\ has children and the
+Recurse parameter was not specified. If you continue, all children will be
+removed with the item. Are you sure you want to continue?
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help
+(default is "Y"):y
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> rm .\.vagrant\
+
+Confirm
+The item at
+C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\se
+ssion2\vagrant-examples\example2-2\.vagrant\ has children and the Recurse
+parameter was not specified. If you continue, all children will be removed
+with the item. Are you sure you want to continue?
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help
+(default is "Y"):y
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> ls
+
+
+    Directory: C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracti
+    ceCourseWork\session2\vagrant-examples\example2-2
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        07/10/2026     10:28                ansible
+-a----        07/10/2026     10:27           1219 generate-ansible-ssh.sh
+-a----        07/10/2026     10:27            995 provision-users-rhel.sh
+-a----        07/10/2026     10:27            993 provision-users-ubuntu.sh
+-a----        07/10/2026     10:27           3980 README.md
+-a----        07/10/2026     10:27           4853 Vagrantfile
+
+########################################################################################
 
 
 
