@@ -22,7 +22,7 @@ Normally Vagrant stores downloaded `.box` files and other user configuration in 
 However this can mean that the boxes are stored on a one drive or other network drive, so I prefer to make sure they are stored on the local C drive. 
 The location is set using the VAGRANT_HOME variable
 
-(in the university lab VAGRNT_HOME is set to D:/vagranthome)
+(in the university lab VAGRANT_HOME is set to D:/vagranthome)
 
 ```
 setx VAGRANT_HOME C:\devel\vagrant\vagranthome

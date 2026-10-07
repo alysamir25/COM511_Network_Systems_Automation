@@ -1,0 +1,17 @@
+---
+
+- name: Install apache on all web servers
+  hosts: all
+  become: true
+  
+  roles:
+    - installApache
+    
+  tasks:
+      
+    - name: Copy file from controller to remote host
+      ansible.builtin.copy:
+        src: ./files/examplewebpage.html
+        dest: /var/www/html/examplewebpage.html
+
+      
