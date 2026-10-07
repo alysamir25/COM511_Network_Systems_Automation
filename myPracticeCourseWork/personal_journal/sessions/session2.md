@@ -712,7 +712,85 @@ d-----        07/10/2026     10:28                ansible
 -a----        07/10/2026     10:27           4853 Vagrantfile
 
 ########################################################################################
+It looks like it did the magic, Ping worked
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> vagrant ssh ansible_controller
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
 
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Oct  7 11:10:37 AM UTC 2026
+
+  System load:           0.01
+  Usage of /:            16.1% of 30.34GB
+  Memory usage:          29%
+  Swap usage:            0%
+  Processes:             128
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+vagrant@ansible-controller:~$ sudo su ansible
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@ansible-controller:/home/vagrant$ cd /vagrant/ansible/project-ansible2-1
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[ERROR]: Task failed: Failed to connect to the host via ssh: Host key verification failed.
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.30 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+192.168.56.10 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+192.168.56.20 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[WARNING]: Host '192.168.56.10' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+192.168.56.10 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.12"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+[WARNING]: Host '192.168.56.30' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+192.168.56.30 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.9"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+[WARNING]: Host '192.168.56.20' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+192.168.56.20 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.12"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
+#################################################################################################
 
 
 
