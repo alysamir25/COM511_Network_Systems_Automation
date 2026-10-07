@@ -435,6 +435,195 @@ Origin: <adhoc 'ping' task>
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
 ############################################################################################
+Solution: Deleted both known_hosts files
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ls -al
+total 14
+drwxrwxrwx 1 vagrant vagrant 4096 Oct  7 09:28 .
+drwxrwxrwx 1 vagrant vagrant    0 Oct  7 09:28 ..
+-rwxrwxrwx 1 vagrant vagrant  191 Oct  7 09:27 ansible.cfg
+-rwxrwxrwx 1 vagrant vagrant  408 Oct  7 09:27 inventory2.ini
+-rwxrwxrwx 1 vagrant vagrant   96 Oct  7 09:27 inventory.ini
+-rwxrwxrwx 1 vagrant vagrant 4978 Oct  7 09:27 README.md
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ cd /home/ansible/.ssh/
+ansible@ansible-controller:~/.ssh$ ls -al
+total 28
+drwx------ 2 ansible ansible 4096 Oct  7 10:14 .
+drwxr-x--- 4 ansible ansible 4096 Oct  7 10:36 ..
+-rw-r--r-- 1 ansible ansible  740 Oct  7 10:00 authorized_keys
+-rw------- 1 ansible ansible 3430 Oct  7 10:00 id_rsa
+-rw-r--r-- 1 ansible ansible  740 Oct  7 10:00 id_rsa.pub
+-rw------- 1 ansible ansible 1956 Oct  7 10:14 known_hosts
+-rw------- 1 ansible ansible 1120 Oct  7 10:14 known_hosts.old
+ansible@ansible-controller:~/.ssh$ rm known_hosts
+ansible@ansible-controller:~/.ssh$ rm known_hosts.old
+ansible@ansible-controller:~/.ssh$ ls -al
+total 20
+drwx------ 2 ansible ansible 4096 Oct  7 10:45 .
+drwxr-x--- 4 ansible ansible 4096 Oct  7 10:36 ..
+-rw-r--r-- 1 ansible ansible  740 Oct  7 10:00 authorized_keys
+-rw------- 1 ansible ansible 3430 Oct  7 10:00 id_rsa
+-rw-r--r-- 1 ansible ansible  740 Oct  7 10:00 id_rsa.pub
+ansible@ansible-controller:~/.ssh$
+#############################################################################
+Did not work, still failed
+ansible@ansible-controller:~/.ssh$ cd /vagrant/ansible/project-ansible2-1
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[ERROR]: Task failed: Failed to connect to the host via ssh: Host key verification failed.
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.30 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+192.168.56.10 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+192.168.56.20 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
+#############################################################################################
+reprovisioned the machines but still did not work
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ssh 192.168.56.20
+The authenticity of host '192.168.56.20 (192.168.56.20)' can't be established.
+ED25519 key fingerprint is SHA256:VjufUgJCRplYbNSq6ATc0g/DLpYxoTbOJ7Eaml2Enlc.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.56.20' (ED25519) to the list of known hosts.
+Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.20's password:
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Oct  7 10:47:53 AM UTC 2026
+
+  System load:           0.05
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          22%
+  Swap usage:            0%
+  Processes:             133
+  Users logged in:       1
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Wed Oct  7 10:38:07 2026 from 192.168.56.10
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@ubuntu-1:~$ exit
+logout
+Connection to 192.168.56.20 closed.
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ssh 192.168.56.30
+The authenticity of host '192.168.56.30 (192.168.56.30)' can't be established.
+ED25519 key fingerprint is SHA256:NcU1EQT5o1v+HYAdqF972vTlrHoEppCN9OSuFUfeIQE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.56.30' (ED25519) to the list of known hosts.
+Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.30's password:
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Last login: Wed Oct  7 10:39:36 2026 from 192.168.56.10
+[ansible@rocky-1 ~]$ exit
+logout
+Connection to 192.168.56.30 closed.
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[ERROR]: Task failed: Failed to connect to the host via ssh: Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.30 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Load key \"/home/ansible/.ssh/id_rsa\": error in libcrypto\r\nansible@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).",
+    "unreachable": true
+}
+[ERROR]: Task failed: Failed to connect to the host via ssh: Host key verification failed.
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.10 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.",
+    "unreachable": true
+}
+[ERROR]: Task failed: Failed to connect to the host via ssh: Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.20: Permission denied (publickey,password).
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.20 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Load key \"/home/ansible/.ssh/id_rsa\": error in libcrypto\r\nansible@192.168.56.20: Permission denied (publickey,password).",
+    "unreachable": true
+}
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
+####################################################################################
+I also run the ansible command without key checking from the command line but still failed
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[ERROR]: Task failed: Failed to connect to the host via ssh: Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.30 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Load key \"/home/ansible/.ssh/id_rsa\": error in libcrypto\r\nansible@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).",
+    "unreachable": true
+}
+[ERROR]: Task failed: Failed to connect to the host via ssh: Warning: Permanently added '192.168.56.10' (ED25519) to the list of known hosts.
+Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.10: Permission denied (publickey,password).
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.10 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Warning: Permanently added '192.168.56.10' (ED25519) to the list of known hosts.\r\nLoad key \"/home/ansible/.ssh/id_rsa\": error in libcrypto\r\nansible@192.168.56.10: Permission denied (publickey,password).",
+    "unreachable": true
+}
+[ERROR]: Task failed: Failed to connect to the host via ssh: Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
+ansible@192.168.56.20: Permission denied (publickey,password).
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+192.168.56.20 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: Load key \"/home/ansible/.ssh/id_rsa\": error in libcrypto\r\nansible@192.168.56.20: Permission denied (publickey,password).",
+    "unreachable": true
+}
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
+#################################################################################
 
 
 
