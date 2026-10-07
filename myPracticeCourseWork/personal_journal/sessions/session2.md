@@ -812,7 +812,166 @@ ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inven
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
 ```
 
+```
+vagrant@ansible-controller:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-facts-anddebug.yml -i inventory.ini
 
+PLAY [Example Playbook] ********************************************************
+
+TASK [Gathering Facts] *********************************************************
+[ERROR]: Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).
+fatal: [rocky_1]: UNREACHABLE! => {"changed": false, "msg": "Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.30: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).", "unreachable": true}
+[ERROR]: Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.10: Permission denied (publickey,password).
+fatal: [ansible_controller]: UNREACHABLE! => {"changed": false, "msg": "Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.10: Permission denied (publickey,password).", "unreachable": true}
+[ERROR]: Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.20: Permission denied (publickey,password).
+fatal: [ubuntu_1]: UNREACHABLE! => {"changed": false, "msg": "Task failed: Failed to connect to the host via ssh: vagrant@192.168.56.20: Permission denied (publickey,password).", "unreachable": true}
+
+PLAY RECAP *********************************************************************
+ansible_controller         : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0
+rocky_1                    : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu_1                   : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0
+
+vagrant@ansible-controller:/vagrant/ansible/project-ansible2-2$ sudu su ansible
+-bash: sudu: command not found
+vagrant@ansible-controller:/vagrant/ansible/project-ansible2-2$ sudo su ansi
+ble
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-facts-anddebug.yml -i inventory.ini
+
+PLAY [Example Playbook] ********************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host 'rocky_1' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [rocky_1]
+[WARNING]: Host 'ansible_controller' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ansible_controller]
+[WARNING]: Host 'ubuntu_1' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ubuntu_1]
+
+TASK [Print OS family] *********************************************************
+ok: [ubuntu_1] => {
+    "msg": "OS Family is Debian"
+}
+ok: [ansible_controller] => {
+    "msg": "OS Family is Debian"
+}
+ok: [rocky_1] => {
+    "msg": "OS Family is RedHat"
+}
+
+PLAY RECAP *********************************************************************
+ansible_controller         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+rocky_1                    : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu_1                   : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-facts-anddebug.yml -i inventory.ini -vv
+ansible-playbook [core 2.21.5]
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/ansible/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/ansible/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible-playbook
+  python version = 3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  pyyaml version = 6.0.1 (with libyaml v0.2.5)
+Using /etc/ansible/ansible.cfg as config file
+Skipping callback 'minimal', as we already have a stdout callback.
+Skipping callback 'oneline', as we already have a stdout callback.
+
+PLAYBOOK: playbook-facts-anddebug.yml ******************************************
+1 plays in playbook-facts-anddebug.yml
+
+PLAY [Example Playbook] ********************************************************
+
+TASK [Gathering Facts] *********************************************************
+task path: /vagrant/ansible/project-ansible2-2/playbook-facts-anddebug.yml:2
+[WARNING]: Host 'ansible_controller' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ansible_controller]
+[WARNING]: Host 'rocky_1' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [rocky_1]
+[WARNING]: Host 'ubuntu_1' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ubuntu_1]
+
+TASK [Print OS family] *********************************************************
+task path: /vagrant/ansible/project-ansible2-2/playbook-facts-anddebug.yml:7
+ok: [ansible_controller] => {
+    "msg": "OS Family is Debian"
+}
+ok: [ubuntu_1] => {
+    "msg": "OS Family is Debian"
+}
+ok: [rocky_1] => {
+    "msg": "OS Family is RedHat"
+}
+
+PLAY RECAP *********************************************************************
+ansible_controller         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+rocky_1                    : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu_1                   : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-all-apache.yml -i inventory.ini
+
+PLAY [Install apache on all web servers] ***************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host 'rocky_1' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [rocky_1]
+[WARNING]: Host 'ansible_controller' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ansible_controller]
+[WARNING]: Host 'ubuntu_1' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ubuntu_1]
+
+TASK [installApache : debug] ***************************************************
+ok: [ansible_controller] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+ok: [ubuntu_1] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+ok: [rocky_1] => {
+    "msg": "Running tasks for  OS Family: RedHat"
+}
+
+TASK [installApache : Load OS specific tasks (RHEL)] ***************************
+skipping: [ansible_controller]
+skipping: [ubuntu_1]
+included: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Rhel.yml for rocky_1
+
+TASK [installApache : Install Apache] ******************************************
+changed: [rocky_1]
+
+TASK [installApache : Start Apache] ********************************************
+changed: [rocky_1]
+
+TASK [installApache : Enable HTTP and HTTPS services in firewalld] *************
+changed: [rocky_1] => (item=http)
+changed: [rocky_1] => (item=https)
+
+TASK [installApache : Load OS specific tasks (Debian)] *************************
+skipping: [rocky_1]
+included: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml for ansible_controller, ubuntu_1
+
+TASK [installApache : install apache2] *****************************************
+changed: [ubuntu_1]
+changed: [ansible_controller]
+
+TASK [installApache : Start Apache] ********************************************
+ok: [ubuntu_1]
+ok: [ansible_controller]
+
+TASK [Copy file from controller to remote host] ********************************
+changed: [ubuntu_1]
+changed: [ansible_controller]
+changed: [rocky_1]
+
+PLAY RECAP *********************************************************************
+ansible_controller         : ok=6    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+rocky_1                    : ok=7    changed=4    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+ubuntu_1                   : ok=6    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible2-2$
+```
 
 ## Summary of learning
 *What did you learn through these exercises*
