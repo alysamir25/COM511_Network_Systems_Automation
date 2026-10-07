@@ -27,7 +27,7 @@ rocky_1                   running (virtualbox)
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
-#################################################################
+```
 PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> vagrant ssh ansible_controller
 Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
 
@@ -158,6 +158,7 @@ applicable law.
 
 To run a command as administrator (user "root"), use "sudo <command>".
 See "man sudo_root" for details.
+```
 
 ```
 ansible@ubuntu-1:~$ exit
@@ -202,8 +203,8 @@ drwx------ 2 vagrant vagrant 4096 Oct  7 09:58 .ssh
 root@ansible-controller:/home/vagrant#
 ```
 
-########################################################################
 
+```
 *Logged in to ansible controller using putty*
 login as: admin
 admin@192.168.56.10's password:
@@ -258,8 +259,9 @@ More information can be found at https://github.com/chef/bento
 Use of this system is acceptance of the OS vendor EULA and License Agreements.
 ^Cmin@ansible-controller:~$ails.r (user "root"), use "sudo <command>".
 admin@ansible-controller:~$
+```
 
-#####################################################
+```
 ansible@ansible-controller:/home/vagrant$ ip addr
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -349,7 +351,9 @@ Origin: <adhoc 'ping' task>
     "unreachable": true
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-########################################################################################
+```
+
+```
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ssh 192.168.56.20
 Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
 ansible@192.168.56.20's password:
@@ -383,8 +387,9 @@ ansible@ubuntu-1:~$
 ansible@ubuntu-1:~$ exit
 logout
 Connection to 192.168.56.20 closed.
+```
 
-#########################################################################################
+```
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ssh 192.168.56.30
 Load key "/home/ansible/.ssh/id_rsa": error in libcrypto
 ansible@192.168.56.30's password:
@@ -399,7 +404,9 @@ Last login: Wed Oct  7 10:14:23 2026 from 192.168.56.10
 [ansible@rocky-1 ~]$ exit
 logout
 Connection to 192.168.56.30 closed.
-##########################################################################################
+```
+
+```
 Tried again and it failed for the second time:
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping
 [WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
@@ -436,7 +443,9 @@ Origin: <adhoc 'ping' task>
     "unreachable": true
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-############################################################################################
+```
+
+```
 Solution: Deleted both known_hosts files
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ls -al
 total 14
@@ -466,7 +475,9 @@ drwxr-x--- 4 ansible ansible 4096 Oct  7 10:36 ..
 -rw------- 1 ansible ansible 3430 Oct  7 10:00 id_rsa
 -rw-r--r-- 1 ansible ansible  740 Oct  7 10:00 id_rsa.pub
 ansible@ansible-controller:~/.ssh$
-#############################################################################
+```
+
+```
 Did not work, still failed
 ansible@ansible-controller:~/.ssh$ cd /vagrant/ansible/project-ansible2-1
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping
@@ -492,7 +503,9 @@ Origin: <adhoc 'ping' task>
     "unreachable": true
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-#############################################################################################
+```
+
+```
 reprovisioned the machines but still did not work
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ssh 192.168.56.20
 The authenticity of host '192.168.56.20 (192.168.56.20)' can't be established.
@@ -585,7 +598,9 @@ Origin: <adhoc 'ping' task>
     "unreachable": true
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-####################################################################################
+```
+
+```
 I also run the ansible command without key checking from the command line but still failed
 
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inventory.ini all -m ping -e "ansible_ssh_common_args='-o StrictHostKeyChecking=no'"
@@ -625,7 +640,9 @@ Origin: <adhoc 'ping' task>
     "unreachable": true
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-#################################################################################
+```
+
+```
 Trying another solution:
 Deleted .ssh-ansible and .vagrant files and restarting all of the 3 machines again, let's see if this will fix it
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ping 192.168.56.20
@@ -712,8 +729,9 @@ d-----        07/10/2026     10:28                ansible
 -a----        07/10/2026     10:27            993 provision-users-ubuntu.sh
 -a----        07/10/2026     10:27           3980 README.md
 -a----        07/10/2026     10:27           4853 Vagrantfile
+```
 
-########################################################################################
+```
 It looks like it did the magic, Ping worked
 PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session2\vagrant-examples\example2-2> vagrant ssh ansible_controller
 Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
@@ -792,7 +810,7 @@ ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$ ansible -i inven
     "ping": "pong"
 }
 ansible@ansible-controller:/vagrant/ansible/project-ansible2-1$
-#################################################################################################
+```
 
 
 
