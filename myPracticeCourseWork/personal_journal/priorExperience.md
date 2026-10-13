@@ -21,17 +21,17 @@ I have some understanding of networking concepts such as IP addressing, routing,
 
 ---
 
-From this module I would like to learn:
+# From this module I would like to learn:
 
-Infrastructure as Code (IaC) methodologies.
-Automated server provisioning using Ansible.
-Virtualisation technologies such as Vagrant and VirtualBox.
-Automated operating system deployment using PXE boot.
-Containerisation and orchestration technologies such as Docker and Kubernetes.
-Network automation and configuration management.
-Automated VPN, firewall, DNS and DHCP deployment.
-Monitoring and management of large-scale infrastructures.
-Industry-standard DevOps and DevSecOps practices.
-My main goal is to develop practical skills that are used in modern enterprise environments and which will support my future career within Cyber Security, Systems Administration, Infrastructure Engineering, or DevSecOps.
+* Infrastructure as Code (IaC) methodologies.
+* Automated server provisioning using Ansible.
+* Virtualisation technologies such as Vagrant and VirtualBox.
+* Automated operating system deployment using PXE boot.
+* Containerisation and orchestration technologies such as Docker and Kubernetes.
+* Network automation and configuration management.
+* Automated VPN, firewall, DNS and DHCP deployment.
+* Monitoring and management of large-scale infrastructures.
+* Industry-standard DevOps and DevSecOps practices.
+* My main goal is to develop practical skills that are used in modern enterprise environments and which will support my future career within Cyber Security, Systems * Administration, Infrastructure Engineering, or DevSecOps.
 
 ---
