@@ -6,10 +6,10 @@
 |      |      |
 |:---- |:---- |
 | Course and Year | COM511 Network Systems Automation 2026 | 
-| Student Name | |
-| Student Number | |
-| Student Email | |
-| Github Account Username | |
+| Student Name | Aly Elsharkawy |
+| Student Number | 103121978 |
+| Student Email | 0elsha78@solent.ac.uk |
+| Github Account Username | alysamir25 |
 | Github Submission Repository URL | |
 
 ## Introduction
