@@ -13,8 +13,8 @@ Use  screen shots and / or code samples as appropriate.
 
 |  Session                                | Topics                                                                 |
 |:----------------------------------------|:-----------------------------------------------------------------------|
-| [Session&nbsp;1](../sessions/session1_virtualisation_and_iac/session1-reflections.md) |                                                                      |
-| [Session&nbsp;2](../sessions/session2_automated_provisioning/session2-reflections.md) |                                                                      |
+| [Session&nbsp;1](../sessions/session1_virtualisation_and_iac/session1-reflections.md) | Infrastructure as Code Architecture |
+| [Session&nbsp;2](../sessions/session2_automated_provisioning/session2-reflections.md) | Centralised Configuration Management |
 | [Session&nbsp;3](../sessions/session3_core_network_services/session3-reflections.md) |                                                                      |
 | [Session&nbsp;4](../sessions/session4_bare_metal_pxe/session4-reflections.md) |                                                                      |
 | [Session&nbsp;5](../sessions/session5_containerisation/session5-reflections.md) |                                                                      |
