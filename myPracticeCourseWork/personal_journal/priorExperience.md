@@ -32,6 +32,7 @@ I have some understanding of networking concepts such as IP addressing, routing,
 * Automated VPN, firewall, DNS and DHCP deployment.
 * Monitoring and management of large-scale infrastructures.
 * Industry-standard DevOps and DevSecOps practices.
-* My main goal is to develop practical skills that are used in modern enterprise environments and which will support my future career within Cyber Security, Systems * Administration, Infrastructure Engineering, or DevSecOps.
+
+My main goal is to develop practical skills that are used in modern enterprise environments and which will support my future career within Cyber Security, Systems * Administration, Infrastructure Engineering, or DevSecOps.
 
 ---
