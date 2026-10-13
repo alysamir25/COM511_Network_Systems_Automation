@@ -1,0 +1,9 @@
+---
+- name: Example Playbook
+  hosts: all
+  gather_facts: yes
+  
+  tasks:
+    - name: Print OS family
+      debug:
+        msg: "OS Family is {{ ansible_facts['os_family'] }}"

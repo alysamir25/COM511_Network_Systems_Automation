@@ -1,0 +1,138 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+    
+    # Ansible Controller
+    config.vm.define "ansible_controller" do |ansible_controller|
+
+       # note local box defined in another project
+       ansible_controller.vm.box = "bento/ubuntu-24.04"
+       
+       # ansible_controller.vm.synced_folder ".", "/vagrant", disabled: true
+       
+       ansible_controller.vm.hostname = "ansible-controller"
+
+
+       # Create a private network, which allows host-only access to the machine
+       # using a specific IP below DHCP range of virtual box
+       ansible_controller.vm.network "private_network", ip: "192.168.56.10"
+
+       ansible_controller.vm.provider "virtualbox" do |vb|
+          # Display the VirtualBox GUI when booting the machine
+          vb.gui = true
+
+          # Customize the amount of memory on the VM:
+          vb.memory = "1024"
+          vb.cpus = 1
+       end
+
+       # add useful software
+       # mkpasswd is part of ubuntu whois package
+       ansible_controller.vm.provision "shell", inline: <<-SHELL
+          echo "adding software to ubuntu"
+          apt-get update
+          apt-get install -y whois git
+       SHELL
+
+       # install ansible from apt
+       # see https://www.cherryservers.com/blog/install-ansible-ubuntu-24-04
+       ansible_controller.vm.provision "shell", inline: <<-SHELL
+          apt update
+          apt install software-properties-common -y
+          add-apt-repository --yes --update ppa:ansible/ansible
+          apt install ansible -y
+          ansible --version
+       SHELL
+       
+       # this shell provisioner will run the ansible ssh provisioning file
+       ansible_controller.vm.provision "shell", path: "provision-users-ubuntu.sh"
+       
+       # this shell provisioner will run the ansible ssh provisioning file which sets up an ansible ssh login for all hosts
+       ansible_controller.vm.provision "shell", path: "generate-ansible-ssh.sh"
+
+     
+    end  # ansible_controller
+
+  # first machine
+  config.vm.define "ubuntu_1" do |ubuntu_1|
+  
+     # note local box defined in another project
+     ubuntu_1.vm.box = "bento/ubuntu-24.04"
+         
+     # ubuntu_1.vm.synced_folder ".", "/vagrant", disabled: true
+     
+     ubuntu_1.vm.hostname = "ubuntu-1"
+     
+     # Create a private network, which allows host-only access to the machine
+     # using a specific IP.
+     ubuntu_1.vm.network "private_network", ip: "192.168.56.20"
+  
+     ubuntu_1.vm.provider "virtualbox" do |vb|
+        # Display the VirtualBox GUI when booting the machine
+        vb.gui = true
+  
+        # Customize the amount of memory on the VM:
+        vb.memory = "1024"
+        vb.cpus = 1
+     end
+     
+     # add useful software
+     # mkpasswd is part of ubuntu whois package
+     ubuntu_1.vm.provision "shell", inline: <<-SHELL
+        echo "adding software to ubuntu"
+        apt-get update
+        apt-get install -y whois git
+     SHELL
+     
+     # this shell provisioner will run the ansible ssh provisioning file
+     ubuntu_1.vm.provision "shell", path: "provision-users-ubuntu.sh"
+     
+     # this shell provisioner will run the ansible ssh provisioning file
+     ubuntu_1.vm.provision "shell", path: "generate-ansible-ssh.sh"
+   
+  end  # ubuntu_1
+  
+  # Second machine
+  config.vm.define "rocky_1" do |rocky_1|
+  
+     # note local box defined in another project
+     rocky_1.vm.box = "bento/rockylinux-9.6"
+     
+     # rocky_1.vm.synced_folder ".", "/vagrant", disabled: true
+     
+     rocky_1.vm.hostname = "rocky-1"
+  
+     # Create a private network, which allows host-only access to the machine
+     # using a specific IP below DHCP range of virtual box
+     rocky_1.vm.network "private_network", ip: "192.168.56.30"
+  
+     rocky_1.vm.provider "virtualbox" do |vb|
+        # Display the VirtualBox GUI when booting the machine
+        vb.gui = true
+  
+        # Customize the amount of memory on the VM:
+        vb.memory = "1024"
+        vb.cpus = 1
+     end
+     
+     # add useful software
+     rocky_1.vm.provision "shell", inline: <<-SHELL
+        echo "adding software to rocky"
+        dnf -y install git nano wget mkpasswd net-tools
+     SHELL
+     
+     # this shell provisioner will run the ansible ssh provisioning file
+     rocky_1.vm.provision "shell", path: "provision-users-rhel.sh"
+        
+     # this shell provisioner will run the ansible ssh provisioning file
+     rocky_1.vm.provision "shell", path: "generate-ansible-ssh.sh"
+   
+  end  # rocky_1
+
+  
+end

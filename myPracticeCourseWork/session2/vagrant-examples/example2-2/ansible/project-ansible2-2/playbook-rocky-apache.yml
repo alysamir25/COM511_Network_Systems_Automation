@@ -1,0 +1,34 @@
+---
+
+- hosts: rocky_hosts
+  tasks:
+    - name: Install Apache
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+      become: true
+
+    - name: Start Apache
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+      become: true
+
+    - name: Enable HTTP and HTTPS services in firewalld
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        zone: public
+        permanent: true
+        immediate: true
+        state: enabled
+      loop:
+        - http
+        - https
+      become: true
+      
+    - name: Copy file from controller to remote host
+      ansible.builtin.copy:
+        src: ./files/examplewebpage.html
+        dest: /var/www/html/examplewebpage.html
+      become: true
