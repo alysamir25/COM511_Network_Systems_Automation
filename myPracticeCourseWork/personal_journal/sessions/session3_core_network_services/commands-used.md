@@ -1,3 +1,4 @@
+## Exercise 3.1
 ```
 PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session3\vagrant-examples\example3-1> vagrant status
 Current machine states:
@@ -948,4 +949,95 @@ listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 8 packets received by filter
 0 packets dropped by kernel
 ```
+---
+## Exercise 3.2
+# My understanding
+# 1. The Vagrant Virtualbox Networking
 
+                        Internet
+                            |
+                       NAT Network
+                        10.0.2.x
+                            |
+ -------------------------------------------------
+|                VirtualBox Host                 |
+ -------------------------------------------------
+                            |
+                    Host-Only Network
+                     192.168.100.x
+                            |
+ ----------------------------------------------------
+ |                      |                           |
+ansible-controller   ubuntu-1                  ubuntu-2
+
+---
+* Each VM has the following NICs:
+   * eth0 that is connected to NAT Network
+      * Used for: 
+          * Internet access
+          * Downloading packages
+      * Example 10.0.2.15
+  * eth1 that is connected to Host-Only Network
+        * Used for: 
+          * Communication between VMs
+          * DHCP experiments
+          * DNS experiments
+      * Example 192.168.100.x
+---
+# 2. How dnsmasq DHCP works
+Normally DHCP works like this:
+- A new device joins the network and doesn't know:
+ * Its IP address
+ * Gateway
+ * DNS server
+- So it broadcasts DHCPSIDCOVER
+- The DHCP server replies DHCPOFFER with IP address, Gateway, DNS Server and Lease Time
+- The client then says DHCPREQUEST
+- Finally the DHCP server says DHCPACK
+- The result is The Client gets IP address
+
+# Real Example:
+* Suppose dnsmasq server is 192.168.100.254
+* Client (ubuntu_1) boots
+* Process:
+  ubuntu_1
+     |
+     | DHCPDISCOVER
+     ↓
+dnsmasq
+     |
+     | DHCPOFFER 192.168.100.10
+     ↓
+ubuntu_1
+     |
+     | DHCPREQUEST
+     ↓
+dnsmasq
+     |
+     | DHCPACK
+     ↓
+ubuntu_1 now owns:
+192.168.100.10
+
+# 3. How Ansible creates DHCP configuration
+Instead of manually configuration files using:
+```
+sudo nano /etc/dnsmasq.conf
+```
+Ansible uses:
+```
+Jinja templates
+```
+and playbooks.
+Jinja looks like:
+```
+Jinja
+dhcp-range=192.168.100.10,192.168.100.50,12h
+```
+which means give out address 192.168.100.10 to 192.168.100.50
+
+Then Ansible deploys automatically:
+```
+ansible-playbook setup-dhcp.yml
+```
+This is called Infrastructure as Code.
