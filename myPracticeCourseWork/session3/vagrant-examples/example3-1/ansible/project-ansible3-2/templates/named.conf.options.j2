@@ -1,0 +1,36 @@
+// templates/named.conf.options.j2
+options {
+	listen-on port 53 { any; };
+	
+	directory "/var/cache/bind";
+	
+	allow-query     { any; };
+	
+	recursion 	yes;
+	dnssec-validation yes;
+
+    forwarders {
+{% for fwd in bind_forwarders %}
+        {{ fwd }};
+{% endfor %}
+    };
+
+};
+
+
+// Logging configuration
+logging {
+    channel default_log {
+        file "/var/log/named/default.log" versions 3 size 5m;
+        severity info;
+        print-time yes;
+        print-severity yes;
+        print-category yes;
+    };
+
+    category default { default_log; };
+    category queries { default_log; };
+};
+
+
+

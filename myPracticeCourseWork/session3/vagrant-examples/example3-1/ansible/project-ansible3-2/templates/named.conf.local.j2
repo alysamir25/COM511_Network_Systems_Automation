@@ -1,0 +1,15 @@
+// templates/named.conf.local.j2
+
+zone "{{ domain_name }}" IN {
+    type master;
+    file "/etc/bind/zones/{{ domain_name }}.forward";
+    allow-update { none; }; 
+};
+
+zone "{{ reverse_net }}.in-addr.arpa" IN {
+    type master;
+    file "/etc/bind/zones/{{ domain_name }}.reverse";
+    allow-update { none; };
+
+
+};
