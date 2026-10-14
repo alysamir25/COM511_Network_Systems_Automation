@@ -676,3 +676,276 @@ Bringing machine 'ubuntu_2' up with 'virtualbox' provider...
 ==> ubuntu_2: flag to force provisioning. Provisioners marked to run always will still run.
 ```
 Still did not work. I guess it is because I was editing hosts.ini and not inventory.ini. So I decided to leave it to try when I am on exercise 3.2
+---
+Now working on DNS example using dnsmasq:
+I will configure dnsmasq and tell ubuntu which dns servers to use through etc/resolve.conf
+
+I want the server to prefer the new dnsmasq nameserver but I also will provide a fall back to the NAT DNS server in case it fails.
+
+I also need to tell the guests to use the new dnsmasq nameserver.
+
+By running ansible-playbook script, dnsmasq will supply each of the host machines with an ip address
+
+Aldo setup-guest-dns.yml playbook will configure the host machined to use the new DNS server.
+```
+ansible@ansible-controller:/home/vagrant$ cd /vagrant/ansible/project-ansible3-1
+
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ ansible-playbook -i inventory/dev/hosts.ini  setup-guest-dns.yml
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible3-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+
+PLAY [Set up DNS on Ubuntu guest] **********************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host 'ubuntu-2' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ubuntu-2]
+[WARNING]: Host 'ubuntu-1' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [ubuntu-1]
+
+TASK [replace systemd-resolved] ************************************************
+changed: [ubuntu-1]
+changed: [ubuntu-2]
+
+PLAY RECAP *********************************************************************
+ubuntu-1                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu-2                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+To test it, I will ping, and use nslookup
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ ping ubuntu-1.lab.example.com
+PING ubuntu-1.lab.example.com (192.168.100.10) 56(84) bytes of data.
+64 bytes from ubuntu-1.lab.example.com (192.168.100.10): icmp_seq=1 ttl=64 time=4.86 ms
+64 bytes from ubuntu-1.lab.example.com (192.168.100.10): icmp_seq=2 ttl=64 time=1.84 ms
+64 bytes from ubuntu-1.lab.example.com (192.168.100.10): icmp_seq=3 ttl=64 time=2.93 ms
+64 bytes from ubuntu-1.lab.example.com (192.168.100.10): icmp_seq=4 ttl=64 time=1.84 ms
+64 bytes from ubuntu-1.lab.example.com (192.168.100.10): icmp_seq=5 ttl=64 time=3.66 ms
+^C
+--- ubuntu-1.lab.example.com ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4013ms
+rtt min/avg/max/mdev = 1.835/3.024/4.861/1.149 ms
+```
+Here I am testing connection to the new domain by pinging it
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ nslookup ubuntu-1.lab.example.com
+Server:         192.168.100.254
+Address:        192.168.100.254#53
+
+Name:   ubuntu-1.lab.example.com
+Address: 192.168.100.10
+```
+Here I am testing the connection to the new domain by looking it up
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ nslookup ubuntu-1.lab.example.com 192.168.100.254
+Server:         192.168.100.254
+Address:        192.168.100.254#53
+
+Name:   ubuntu-1.lab.example.com
+Address: 192.168.100.10
+```
+Here I am testing ssh login to the new domain
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ ssh ansible@ubuntu-1.lab.example.com
+The authenticity of host 'ubuntu-1.lab.example.com (192.168.100.10)' can't be established.
+ED25519 key fingerprint is SHA256:VjufUgJCRplYbNSq6ATc0g/DLpYxoTbOJ7Eaml2Enlc.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: [hashed name]
+    ~/.ssh/known_hosts:4: [hashed name]
+    ~/.ssh/known_hosts:5: [hashed name]
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'ubuntu-1.lab.example.com' (ED25519) to the list of known hosts.
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Oct 14 06:19:45 PM UTC 2026
+
+  System load:           0.13
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          21%
+  Swap usage:            0%
+  Processes:             128
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Wed Oct 14 18:01:31 2026 from 192.168.100.254
+ansible@ubuntu-1:~$
+```
+google.com look up using the NAT name server at 10.0.2.3
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ nslookup google.com 10.0.2.3
+Server:         10.0.2.3
+Address:        10.0.2.3#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.250.129.139
+Name:   google.com
+Address: 142.250.129.100
+Name:   google.com
+Address: 142.250.129.113
+Name:   google.com
+Address: 142.250.129.138
+Name:   google.com
+Address: 142.250.129.102
+Name:   google.com
+Address: 142.250.129.101
+Name:   google.com
+Address: 2a00:1450:4009:c08::71
+Name:   google.com
+Address: 2a00:1450:4009:c08::66
+Name:   google.com
+Address: 2a00:1450:4009:c08::64
+Name:   google.com
+Address: 2a00:1450:4009:c08::65
+```
+google.com look up using the dnsmasq name server at 192.168.100.254
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ nslookup google.com 192.168.100.254
+Server:         192.168.100.254
+Address:        192.168.100.254#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.250.151.113
+Name:   google.com
+Address: 142.250.151.100
+Name:   google.com
+Address: 142.250.151.101
+Name:   google.com
+Address: 142.250.151.138
+Name:   google.com
+Address: 142.250.151.102
+Name:   google.com
+Address: 142.250.151.139
+Name:   google.com
+Address: 2a00:1450:4009:c08::66
+Name:   google.com
+Address: 2a00:1450:4009:c08::71
+Name:   google.com
+Address: 2a00:1450:4009:c08::64
+Name:   google.com
+Address: 2a00:1450:4009:c08::65
+```
+Using dig (@192.168.100.254 specifies the dnsmasq name server)
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ dig @192.168.100.254 google.com
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> @192.168.100.254 google.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25925
+;; flags: qr rd ra; QUERY: 1, ANSWER: 6, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;google.com.                    IN      A
+
+;; ANSWER SECTION:
+google.com.             193     IN      A       142.251.30.139
+google.com.             193     IN      A       142.251.30.138
+google.com.             193     IN      A       142.251.30.113
+google.com.             193     IN      A       142.251.30.102
+google.com.             193     IN      A       142.251.30.101
+google.com.             193     IN      A       142.251.30.100
+
+;; Query time: 49 msec
+;; SERVER: 192.168.100.254#53(192.168.100.254) (UDP)
+;; WHEN: Wed Oct 14 18:19:04 UTC 2026
+;; MSG SIZE  rcvd: 135
+```
+---
+# My note
+* The internal DNS server (dnsmasq) successfully resolved local hosts within the lab.example.com domain, while the upstream NAT DNS server could not resolve these locally defined records. This demonstrated the distinction between internal and external DNS resolution and showed how automated DNS can support infrastructure scalability.
+---
+Now I will do dns lookups using tcpdump from ansible_controller with the required interface
+
+In ansible_controller machine, I run tcdump to capture the packets
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo tcpdump -i eth1 dst host 192.168.100.254
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+^C
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo tcpdump -i eth1  host 192.168.100.254
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+```
+
+In another terminal I did ssh login to ubuntu_1 and I did use nslookup to ubuntu-1.lab.example.com
+```
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session3\vagrant-examples\example3-1> vagrant status
+Current machine states:
+
+ansible_controller        running (virtualbox)
+ubuntu_1                  running (virtualbox)
+ubuntu_2                  running (virtualbox)
+ubuntu_bind               running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session3\vagrant-examples\example3-1> vagrant ssh ubuntu_1
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Oct 14 06:40:09 PM UTC 2026
+
+  System load:           0.23
+  Usage of /:            14.7% of 30.34GB
+  Memory usage:          21%
+  Swap usage:            0%
+  Processes:             128
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+vagrant@ubuntu-1:~$ nslookup ubuntu-1.lab.example.com
+Server:         192.168.100.254
+Address:        192.168.100.254#53
+
+Name:   ubuntu-1.lab.example.com
+Address: 192.168.100.10
+
+vagrant@ubuntu-1:~$
+```
+
+I went back to tcpdump capturing session and I could see 8 packets captured
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo tcpdump -i eth1  host 192.168.100.254
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+
+18:40:10.746311 IP ubuntu-1.lab.example.com.38040 > 192.168.100.254.domain: 65247+ A? ubuntu-1.lab.example.com. (42)
+18:40:10.747333 IP 192.168.100.254.domain > ubuntu-1.lab.example.com.38040: 65247* 1/0/0 A 192.168.100.10 (58)
+18:40:10.756479 IP ubuntu-1.lab.example.com.37571 > 192.168.100.254.domain: 20626+ AAAA? ubuntu-1.lab.example.com. (42)
+18:40:10.757224 IP 192.168.100.254.domain > ubuntu-1.lab.example.com.37571: 20626 0/0/0 (42)
+18:40:15.791071 ARP, Request who-has ubuntu-1.lab.example.com tell 192.168.100.254, length 28
+18:40:15.792589 ARP, Reply ubuntu-1.lab.example.com is-at 08:00:27:ff:ff:a2 (oui Unknown), length 46
+18:40:16.035105 ARP, Request who-has 192.168.100.254 tell ubuntu-1.lab.example.com, length 46
+18:40:16.035135 ARP, Reply 192.168.100.254 is-at 08:00:27:ff:ff:a1 (oui Unknown), length 28
+^C
+8 packets captured
+8 packets received by filter
+0 packets dropped by kernel
+```
+
