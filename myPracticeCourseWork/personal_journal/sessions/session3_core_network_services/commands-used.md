@@ -1000,24 +1000,23 @@ Normally DHCP works like this:
 * Suppose dnsmasq server is 192.168.100.254
 * Client (ubuntu_1) boots
 * Process:
-  ubuntu_1
-     |
-     | DHCPDISCOVER
-     ↓
+ubuntu-1
+│
+│ DHCPDISCOVER
+▼
 dnsmasq
-     |
-     | DHCPOFFER 192.168.100.10
-     ↓
-ubuntu_1
-     |
-     | DHCPREQUEST
-     ↓
+│
+│ DHCPOFFER (192.168.100.10)
+▼
+ubuntu-1
+│
+│ DHCPREQUEST
+▼
 dnsmasq
-     |
-     | DHCPACK
-     ↓
-ubuntu_1 now owns:
-192.168.100.10
+│
+│ DHCPACK
+▼
+ubuntu-1
 
 # 3. How Ansible creates DHCP configuration
 Instead of manually configuration files using:
