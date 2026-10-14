@@ -528,7 +528,7 @@ Pre-scan script results:
 |     DHCP Message Type: DHCPOFFER
 |     Server Identifier: 192.168.100.254
 |     IP Address Lease Time: 1h00m00s
-|     Renewal Time Value: 30m00s
+|     Renewal Time Vlue: 30ms
 |     Rebinding Time Value: 52m30s
 |     Subnet Mask: 255.255.255.0
 |     Broadcast Address: 192.168.100.255
@@ -538,4 +538,77 @@ Pre-scan script results:
 |_    Router: 192.168.100.254
 WARNING: No targets were specified, so 0 hosts scanned.
 Nmap done: 0 IP addresses (0 hosts up) scanned in 11.17 seconds
+```
+I wanted to experiment to change the hosts ip addresses
+I checked the hosts.ini before changing
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1/inventory/dev$ cat hosts.ini
+[dns_server]
+ansible-controller  eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.254                 eth1_mac=08:00:27:FF:FF:A2    ansible_host=192.168.100.254    ansibleport=22
+
+[hosts]
+ubuntu-1            eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.10                  eth1_mac=08:00:27:FF:FF:A2    ansible_host=192.168.100.10   ansible_port=22
+ubuntu-2            eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.20                  eth1_mac=08:00:27:FF:FF:A3    ansible_host=192.168.100.20   ansible_port=22
+```
+I then opened the hosts.ini file in my text editor on widows, changed the ip address as follows, ubuntu-1 ip address 192.168.100.20 and ubuntu-2 ip address 192.168.100.30 and I check hosts.ini again after changing it
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ cat cd /vagrant/ansible/project-ansible3-1/inventory/dev/hosts.ini
+cat: cd: No such file or directory
+[dns_server]
+ansible-controller  eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.254                 eth1_mac=08:00:27:FF:FF:A2    ansible_host=192.168.100.254    ansibleport=22
+
+[hosts]
+ubuntu-1            eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.20                  eth1_mac=08:00:27:FF:FF:A2    ansible_host=192.168.100.10   ansible_port=22
+ubuntu-2            eth0_ip=                  eth0_mac=                     eth1_ip=192.168.100.30                  eth1_mac=08:00:27:FF:FF:A3    ansible_host=192.168.100.20   ansible_port=22
+```
+I then had to stop dnsmasq, update it and remove the lease file as:
+Stop dnsmasq
+```
+sudo systemctl stop dnsmasq
+```
+Update the dnsmasq configuration with ansible
+```
+sudo rm /var/lib/misc/dnsmasq.leases
+```
+Delete the dnsmasq leases file /var/lib/misc/dnsmasq.leases
+```
+sudo systemctl start dnsmasq
+```
+I also did reload the DHCP configuration for each client interface in turn by restarting the networking on each client
+```
+ sudo systemctl restart systemd-networkd
+```
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo systemctl stop dnsmasq
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo rm /var/lib/misc/dnsmasq.leases
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo systemctl start dnsmasq
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$  sudo systemctl restart systemd-networkd
+```
+Checked if I can ssh to ubuntu-1 using its ip 192.168.100.20 and it did not worked
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ ssh 192.168.100.20
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Wed Oct 14 11:01:06 AM UTC 2026
+
+  System load:           0.11
+  Usage of /:            14.8% of 30.34GB
+  Memory usage:          22%
+  Swap usage:            0%
+  Processes:             133
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+Last login: Wed Oct 14 10:33:57 2026 from 192.168.100.254
+ansible@ubuntu-2:~$
 ```
