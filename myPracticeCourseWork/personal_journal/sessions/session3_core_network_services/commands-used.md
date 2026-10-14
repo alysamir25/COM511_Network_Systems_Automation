@@ -953,25 +953,23 @@ listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 ## Exercise 3.2
 # My understanding
 # 1. The Vagrant Virtualbox Networking
-
-                       Internet
-                           |
-                      -------------
-                     | NAT Network |
-                     |  10.0.2.x   |
-                      -------------
-                           |
+```
+                        Internet
+                            |
+                       NAT Network
+                        10.0.2.x
+                            |
  -------------------------------------------------
-|               VirtualBox Host                   |
+|                VirtualBox Host                 |
  -------------------------------------------------
-                           |
-                   Host-Only Network
+                            |
+                    Host-Only Network
                      192.168.100.x
-                           |
+                            |
  ----------------------------------------------------
- |                      |                          |
-ansible-controller   ubuntu-1                   ubuntu-2
-
+ |                      |                           |
+ansible-controller   ubuntu-1                  ubuntu-2
+```
 ---
 * Each VM has the following NICs:
    * eth0 that is connected to NAT Network
@@ -1002,16 +1000,34 @@ Normally DHCP works like this:
 * Suppose dnsmasq server is 192.168.100.254
 * Client (ubuntu_1) boots
 * Process:
-
+```
 sequenceDiagram
     participant ubuntu-1 as Ubuntu-1
     participant dnsmasq as Dnsmasq
 
-    ubuntu-1->>dnsmasq: DHCPDISCOVER
-    dnsmasq-->>ubuntu-1: DHCPOFFER (192.168.100.10)
-    ubuntu-1->>dnsmasq: DHCPREQUEST
-    dnsmasq-->>ubuntu-1: DHCPACK
-    Note over ubuntu-1: Now owns 192.168.100.10
+ubuntu-1
+     |
+     | DHCPDISCOVER
+     ↓
+
+dnsmasq
+     |
+     | DHCPOFFER 192.168.100.10
+     ↓
+
+ubuntu-1
+     |
+     | DHCPREQUEST
+     ↓
+
+dnsmasq
+     |
+     | DHCPACK
+     ↓
+
+ubuntu-1 now owns:
+192.168.100.10
+```
 
 # 3. How Ansible creates DHCP configuration
 Instead of manually configuration files using:
