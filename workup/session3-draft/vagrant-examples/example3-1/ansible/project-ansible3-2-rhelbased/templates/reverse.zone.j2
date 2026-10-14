@@ -1,0 +1,21 @@
+$TTL 86400
+@       IN      SOA     ns1.{{ domain_name }}. root.{{ domain_name }}. (
+
+                {{ zone_serial }} ; Serial
+                3600       ; Refresh
+                1800       ; Retry
+                604800     ; Expire
+                86400 )    ; Minimum TTL
+
+; Name Server Information
+@       IN      NS      ns1.{{ domain_name }}.
+
+; Static reverse entry for name server itself
+10.2.0.192			IN	PTR	ns1.{{ domain_name }}.
+
+; Reverse pointers (PTR) - last octet of the IPs
+
+{% for host in groups['company_nodes'] %}
+{{ hostvars[host]['ansible_host']  }}	IN	PTR	{{ host }}.{{ domain_name }}.
+{% endfor %}
+

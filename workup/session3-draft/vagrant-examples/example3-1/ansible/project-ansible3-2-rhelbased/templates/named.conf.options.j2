@@ -1,0 +1,29 @@
+; templates/named.conf.options.j2
+options {
+	listen-on port 53 { 127.0.0.1; {{ dns_ip }}; };
+	directory	"/var/named";
+	dump-file	"/var/named/data/cache_dump.db";
+	statistics-file	"/var/named/data/named_stats.txt";
+	memstatistics-file	"/var/named/data/named_mem_stats.txt";
+	secroots-file	"/var/named/data/named.secroots";
+	recursing-file	"/var/named/data/named.recursing";
+	allow-query	{ localhost; {{ allowed_network }}; };
+	
+	recursion 	yes;
+	dnssec-validation yes;
+	
+	managed-keys-directory	"/var/named/dynamic";
+	pid-file	"/run/named/named.pid";
+	session-keyfile	"/run/named/session.key";
+
+};
+
+logging {
+	channel default_debug {
+		file "data/named.run";
+		severity dynamic;
+	};
+
+};
+
+

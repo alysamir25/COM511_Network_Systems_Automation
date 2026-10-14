@@ -1,0 +1,104 @@
+---
+- name: Setup Authoritative BIND DNS Server
+  hosts: dnsservers
+  become: true
+  
+  vars:
+    bind_listen_ipv4: "{{ ansible_default_ipv4.address }}"
+    bind_forwarders:
+      - 10.0.2.3
+      - 8.8.8.8
+  
+  tasks:
+    - name: Ensure target setup facts are fully populated
+      setup:
+        gather_subset:
+          - date_time
+
+    - name: Compute precise dynamic zone serial number
+      set_fact:   
+        zone_serial: "{{ ansible_facts['date_time']['year']}}{{ ansible_facts['date_time']['month']}}{{ ansible_facts['date_time']['day'] }}{{ ansible_facts['date_time']['hour'] }}"
+
+    - name: Install required packages
+      apt:
+        name:
+          - bind9
+          - bind9-utils
+        state: present
+        update_cache: true
+
+    - name: Deploy named.conf.options file
+      template:
+        src: ./templates/named.conf.options.j2
+        dest: /etc/bind/named.conf.options
+        owner: root
+        group: bind
+        mode: '0644'
+#      notify: Restart named
+      
+    - name: Deploy named.conf.local file
+      template:
+        src: ./templates/named.conf.local.j2
+        dest: /etc/bind/named.conf.local
+        owner: root
+        group: bind
+        mode: '0644'
+#      notify: Restart named
+      
+    - name: Create zones directory
+      ansible.builtin.file:
+        path: /etc/bind/zones
+        state: directory
+        owner: root
+        group: bind
+        mode: '0777'
+        
+    - name: Create bind logs directory
+      ansible.builtin.file:
+        path: /var/log/named
+        state: directory
+        owner: root
+        group: bind
+        mode: '0777'      
+        
+
+    - name: Deploy forward zone database
+      template:
+        src: ./templates/forward.zone.j2
+        dest: /etc/bind/zones/{{ domain_name }}.forward
+        owner: root
+        group: bind
+        mode: '0644'
+ #     notify: Restart named
+
+    - name: Deploy reverse zone database
+      template:
+        src: ./templates/reverse.zone.j2
+        dest: /etc/bind/zones/{{ domain_name }}.reverse
+        owner: root
+        group: bind
+        mode: '0644'
+#      notify: Restart named
+
+#    - name: Ensure firewall allows DNS traffic
+#      ufw:
+#        rule: allow
+#        name: Bind9
+#        state: enabled
+
+    - name: Validate BIND configuration
+      ansible.builtin.command:
+        cmd: named-checkconf
+      changed_when: false
+
+    - name: Enable and start BIND service
+      systemd:
+        name: bind9
+        state: restarted
+        enabled: true
+
+  handlers:
+    - name: Restart named
+      systemd:
+        name: bind9
+        state: restarted

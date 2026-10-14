@@ -1,0 +1,26 @@
+; templates/named.conf.options.j2
+options {
+    directory "/var/cache/bind";
+
+    listen-on { 127.0.0.1; {{ bind_listen_ipv4 }}; };
+    listen-on-v6 { ::1; };
+
+    allow-query { localhost; 192.168.0.0/16; 10.0.0.0/8; };
+    allow-transfer { none; };
+
+    forwarders {
+{% for fwd in bind_forwarders %}
+        {{ fwd }};
+{% endfor %}
+    };
+
+    recursion yes;
+    allow-recursion { localhost; 192.168.0.0/16; 10.0.0.0/8; };
+
+    dnssec-validation auto;
+    auth-nxdomain no;
+
+    // Logging
+    querylog no;
+    version "not disclosed";
+};

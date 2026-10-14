@@ -1,0 +1,99 @@
+---
+- name: Deploy BIND DNS Server
+  hosts: dns_servers
+  become: true
+  vars:
+    bind_listen_ipv4: "{{ ansible_default_ipv4.address }}"
+    bind_forwarders:
+      - 8.8.8.8
+      - 1.1.1.1
+    bind_zones:
+      - name: example.com
+        type: primary
+        file: db.example.com
+      - name: 1.168.192.in-addr.arpa
+        type: primary
+        file: db.192.168.1
+
+  tasks:
+    - name: Install BIND9
+      ansible.builtin.apt:
+        name:
+          - bind9
+          - bind9utils
+          - bind9-doc
+          - dnsutils
+        state: present
+        update_cache: true
+      when: ansible_os_family == "Debian"
+
+    - name: Install BIND (RHEL)
+      ansible.builtin.dnf:
+        name:
+          - bind
+          - bind-utils
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Configure named.conf.options
+      ansible.builtin.template:
+        src: named.conf.options.j2
+        dest: /etc/bind/named.conf.options
+        owner: root
+        group: bind
+        mode: '0640'
+      notify: Restart BIND
+
+    - name: Configure named.conf.local
+      ansible.builtin.template:
+        src: named.conf.local.j2
+        dest: /etc/bind/named.conf.local
+        owner: root
+        group: bind
+        mode: '0640'
+      notify: Reload BIND
+
+    - name: Deploy zone files
+      ansible.builtin.template:
+        src: "{{ item.file }}.j2"
+        dest: "/etc/bind/zones/{{ item.file }}"
+        owner: root
+        group: bind
+        mode: '0640'
+      loop: "{{ bind_zones }}"
+      notify: Reload BIND
+
+    - name: Create zones directory
+      ansible.builtin.file:
+        path: /etc/bind/zones
+        state: directory
+        owner: root
+        group: bind
+        mode: '0750'
+
+    - name: Validate BIND configuration
+      ansible.builtin.command:
+        cmd: named-checkconf
+      changed_when: false
+
+    - name: Validate zone files
+      ansible.builtin.command:
+        cmd: "named-checkzone {{ item.name }} /etc/bind/zones/{{ item.file }}"
+      loop: "{{ bind_zones }}"
+      changed_when: false
+
+    - name: Start BIND
+      ansible.builtin.systemd:
+        name: "{{ 'named' if ansible_os_family == 'RedHat' else 'bind9' }}"
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart BIND
+      ansible.builtin.systemd:
+        name: "{{ 'named' if ansible_os_family == 'RedHat' else 'bind9' }}"
+        state: restarted
+
+    - name: Reload BIND
+      ansible.builtin.command:
+        cmd: rndc reload
