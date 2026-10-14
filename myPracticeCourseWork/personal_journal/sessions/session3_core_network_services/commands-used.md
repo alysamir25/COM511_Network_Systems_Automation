@@ -1043,3 +1043,79 @@ Then Ansible deploys automatically:
 ansible-playbook setup-dhcp.yml
 ```
 This is called Infrastructure as Code.
+---
+# How is that beneficial for the case study
+- Imagine 100 regional offices
+- It would be extremely difficult to manually configure every PC
+- Instead:
+```
+PC boots
+  ↓
+Gets IP from DHCP
+  ↓
+Works automatically
+```
+- This is exactly what Sirius Cybernetics wants
+---
+# 4. Using tcpdump to watch DHCP
+I wanted to see it in action so I did the following:
+1. I opened terminal on the DHCP server and I run as DHCP uses UDP 67 for the server and UDP 68 for the client:
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo tcpdump -i eth1 port 67 or port 68
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+```
+2. Then I restarted ubuntu_2 the client
+```
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session3\vagrant-examples\example3-1> vagrant halt ubuntu_2
+==> ubuntu_2: Attempting graceful shutdown of VM...
+==> ubuntu_2: Forcing shutdown of VM...
+PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session3\vagrant-examples\example3-1> vagrant up ubuntu_2
+Bringing machine 'ubuntu_2' up with 'virtualbox' provider...
+==> ubuntu_2: Checking if box 'bento/ubuntu-24.04' version '202510.26.0' is up to date...
+==> ubuntu_2: Clearing any previously set forwarded ports...
+==> ubuntu_2: Fixed port collision for 22 => 2222. Now on port 2201.
+==> ubuntu_2: Clearing any previously set network interfaces...
+==> ubuntu_2: Preparing network interfaces based on configuration...
+    ubuntu_2: Adapter 1: nat
+    ubuntu_2: Adapter 2: intnet
+==> ubuntu_2: Forwarding ports...
+    ubuntu_2: 22 (guest) => 2201 (host) (adapter 1)
+==> ubuntu_2: Running 'pre-boot' VM customizations...
+==> ubuntu_2: Booting VM...
+==> ubuntu_2: Waiting for machine to boot. This may take a few minutes...
+    ubuntu_2: SSH address: 127.0.0.1:2201
+    ubuntu_2: SSH username: vagrant
+    ubuntu_2: SSH auth method: private key
+==> ubuntu_2: Machine booted and ready!
+==> ubuntu_2: Checking for guest additions in VM...
+==> ubuntu_2: Setting hostname...
+==> ubuntu_2: Configuring and enabling network interfaces...
+==> ubuntu_2: Mounting shared folders...
+    ubuntu_2: C:/devel/gitrepos/COM511_Network_Systems_Automation/myPracticeCourseWork/session3/vagrant-examples/example3-1 => /vagrant
+==> ubuntu_2: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> ubuntu_2: flag to force provisioning. Provisioners marked to run always will still run.
+```
+3. I went back to the server to check the captured packets
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-1$ sudo tcpdump -i eth1 port 67 or port 68
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+20:31:33.138501 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:ff:ff:a3 (oui Unknown), length 295
+20:31:33.139149 IP 192.168.100.254.bootps > ubuntu-2.lab.example.com.bootpc: BOOTP/DHCP, Reply, length 325
+              # Client asking for an address - DHCPDISCOVER
+20:31:33.142790 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:ff:ff:a3 (oui Unknown), length 305
+              # Server giving an address - DHCPOFFER
+20:31:33.149879 IP 192.168.100.254.bootps > ubuntu-2.lab.example.com.bootpc: BOOTP/DHCP, Reply, length 325
+              # Client accepting the address - DHCPREQUEST
+20:31:42.021769 IP ubuntu-2.lab.example.com.bootpc > 192.168.100.254.bootps: BOOTP/DHCP, Request from 08:00:27:ff:ff:a3 (oui Unknown), length 265
+20:31:42.149978 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:ff:ff:a3 (oui Unknown), length 295
+              # Server confirming the address - DHCPACK
+20:31:42.150878 IP 192.168.100.254.bootps > ubuntu-2.lab.example.com.bootpc: BOOTP/DHCP, Reply, length 325
+20:31:42.151951 IP 0.0.0.0.bootpc > 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:ff:ff:a3 (oui Unknown), length 305
+20:31:42.167171 IP 192.168.100.254.bootps > ubuntu-2.lab.example.com.bootpc: BOOTP/DHCP, Reply, length 325
+^C
+9 packets captured
+9 packets received by filter
+0 packets dropped by kernel
+```
