@@ -1001,30 +1001,22 @@ Normally DHCP works like this:
 * Client (ubuntu_1) boots
 * Process:
 ```
-sequenceDiagram
-    participant ubuntu-1 as Ubuntu-1
-    participant dnsmasq as Dnsmasq
-
 ubuntu-1
      |
      | DHCPDISCOVER
      ↓
-
 dnsmasq
      |
      | DHCPOFFER 192.168.100.10
      ↓
-
 ubuntu-1
      |
      | DHCPREQUEST
      ↓
-
 dnsmasq
      |
      | DHCPACK
      ↓
-
 ubuntu-1 now owns:
 192.168.100.10
 ```
