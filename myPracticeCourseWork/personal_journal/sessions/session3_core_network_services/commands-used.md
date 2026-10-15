@@ -1119,3 +1119,333 @@ listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 9 packets received by filter
 0 packets dropped by kernel
 ```
+---
+
+## Exercise 3.3
+# Using BIND as a dns server
+I am changing the directory to be able to run the BIND example
+```
+ansible@ansible-controller:/home/vagrant$ cd /vagrant/ansible/project-ansible3-1
+```
+
+Here I am running the BIND example to sets up a bind server on an additional ubuntu machine which was not involved in the dnsmasq example but it produced an error. Which basically tells me "Failed to connect to the host via ssh: Host key verification failed." that means the problem is SSH trust/authentication between the ansible-controller and ubuntu_bind. So I need to ssh to ubuntu_bind before running the playbook.
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ ansible-playbook -i inventory.ini dns_server.yml
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible3-2), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+
+PLAY [Setup Authoritative BIND DNS Server] *************************************
+
+TASK [Gathering Facts] *********************************************************
+[ERROR]: Task failed: Failed to connect to the host via ssh: Host key verification failed.
+fatal: [dns1]: UNREACHABLE! => {"changed": false, "msg": "Task failed: Failed to connect to the host via ssh: Host key verification failed.", "unreachable": true}
+
+PLAY RECAP *********************************************************************
+dns1                       : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+Here I did ssh to ubuntu_bind and then logged out
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ ssh ansible@192.168.100.250
+The authenticity of host '192.168.100.250 (192.168.100.250)' can't be established.
+ED25519 key fingerprint is SHA256:VjufUgJCRplYbNSq6ATc0g/DLpYxoTbOJ7Eaml2Enlc.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: [hashed name]
+    ~/.ssh/known_hosts:4: [hashed name]
+    ~/.ssh/known_hosts:5: [hashed name]
+    ~/.ssh/known_hosts:6: [hashed name]
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.100.250' (ED25519) to the list of known hosts.
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-86-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 15 11:20:11 AM UTC 2026
+
+  System load:           0.08
+  Usage of /:            14.8% of 30.34GB
+  Memory usage:          22%
+  Swap usage:            0%
+  Processes:             129
+  Users logged in:       0
+  IPv4 address for eth0: 10.0.2.15
+  IPv6 address for eth0: fd17:625c:f037:2:a00:27ff:fef8:c2eb
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+
+Use of this system is acceptance of the OS vendor EULA and License Agreements.
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@ubuntu-bind:~$ exit
+logout
+Connection to 192.168.100.250 closed.
+```
+
+By re-running the playbook again, it was successfully executed
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ ansible-playbook -i inventory.ini dns_server.yml
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible3-2), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+
+PLAY [Setup Authoritative BIND DNS Server] *************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host 'dns1' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [dns1]
+
+TASK [Ensure target setup facts are fully populated] ***************************
+ok: [dns1]
+
+TASK [Compute precise dynamic zone serial number] ******************************
+ok: [dns1]
+
+TASK [Install required packages] ***********************************************
+changed: [dns1]
+
+TASK [Deploy named.conf.options file] ******************************************
+changed: [dns1]
+
+TASK [Deploy named.conf.local file] ********************************************
+changed: [dns1]
+
+TASK [Create zones directory] **************************************************
+changed: [dns1]
+
+TASK [Create bind logs directory] **********************************************
+changed: [dns1]
+
+TASK [Deploy forward zone database] ********************************************
+changed: [dns1]
+
+TASK [Deploy reverse zone database] ********************************************
+changed: [dns1]
+
+TASK [Validate BIND configuration] *********************************************
+ok: [dns1]
+
+TASK [Enable and start BIND service] *******************************************
+changed: [dns1]
+
+PLAY RECAP *********************************************************************
+dns1                       : ok=12   changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+For testing the deployment, I did run dig and nslookup to check the new names
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ nslookup google.com 192.168.100.250
+Server:         192.168.100.250
+Address:        192.168.100.250#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.250.129.113
+Name:   google.com
+Address: 142.250.129.138
+Name:   google.com
+Address: 142.250.129.139
+Name:   google.com
+Address: 142.250.129.100
+Name:   google.com
+Address: 142.250.129.102
+Name:   google.com
+Address: 142.250.129.101
+Name:   google.com
+Address: 2a00:1450:4009:c15::8b
+Name:   google.com
+Address: 2a00:1450:4009:c15::64
+Name:   google.com
+Address: 2a00:1450:4009:c15::66
+Name:   google.com
+Address: 2a00:1450:4009:c15::71
+```
+
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ nslookup web01.practice.local 192.168.100.250
+Server:         192.168.100.250
+Address:        192.168.100.250#53
+
+Name:   web01.practice.local
+Address: 192.168.100.10
+```
+
+---
+
+### Challenge: How would we set up this server to use this dns server to resolve ping queries instead of the default server - and could we use both?
+
+#### Use the BIND Server as the Primary DNS Server
+Linux looks at:
+```
+/etc/resolv.conf
+```
+to determine which DNS server to query.
+
+Currently it contains:
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ cat /etc/resolv.conf
+nameserver 192.168.100.254  # new dnsmasq nameserver
+nameserver 10.0.2.3   # nameserver used in virtualbox NAT network
+```
+
+To use the BIND server instead:
+```
+nameserver 192.168.100.254
+```
+
+Now when I run:
+```
+ping web01.practice.local
+```
+the machine will ask the BIND server:
+```
+192.168.100.250
+```
+to resolve the hostname.
+
+---
+
+#### Use Both DNS Servers
+
+Yes, you can configure multiple DNS servers.
+
+Example:
+```
+nameserver 192.168.100.250
+nameserver 192.168.100.254
+nameserver 10.0.2.3
+```
+Meaning:
+
+1. Try BIND first (192.168.100.250)
+2. If unavailable, try dnsmasq (192.168.100.254)
+3. If that fails, try VirtualBox NAT DNS (10.0.2.3)
+
+This provides redundancy.
+
+---
+
+Testing it:
+
+First checking which server is currently answering:
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ nslookup web01.practice.local 192.168.100.250
+Server:         192.168.100.250
+Address:        192.168.100.250#53
+
+Name:   web01.practice.local
+Address: 192.168.100.10
+```
+BIND is working correctly. It proves that:
+```
+192.168.100.250
+```
+knows about:
+```
+web01.practice.local
+```
+But this fails:
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ ping web01.practice.local
+ping: web01.practice.local: Name or service not known
+```
+Output: Name or service not known. Which means;
+```
+My machine is not using the BIND server as its DNS resolver.
+```
+Why? By looking at my current DNS configuration:
+Current DNS lookup order; but `192.168.100.250`= BIND is missing
+```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ cat /etc/resolv.conf
+nameserver 192.168.100.254  # new dnsmasq nameserver
+nameserver 10.0.2.3   # nameserver used in virtualbox NAT network
+```
+When ping tries to resolve `web01.practice.local` it asks `192.168.100.254`
+The dnsmasq server does not know about `web01.practice.local` so the lookup fails.
+
+##### Why does nslookup work then?
+Because I explicitly told it `nslookup web01.practice.local 192.168.100.250`, Meaning:
+```
+Ignore system DNS settings.
+Ask BIND directly.
+```
+
+---
+---
+#### Objective
+
+The challenge was to configure the system to use the new BIND DNS server `192.168.100.250` for hostname resolution instead of relying on the existing dnsmasq server or the VirtualBox NAT DNS server.
+
+#### Initial Testing
+
+I first verified that the BIND DNS server could resolve internal hostnames:
+```
+nslookup web01.practice.local 192.168.100.250
+```
+
+#### Output:
+
+```
+Name: web01.practice.local
+Address: 192.168.100.10
+```
+
+This confirmed that the BIND server was functioning correctly and contained the appropriate DNS records generated from the Ansible inventory.
+
+However, when I attempted to use the hostname directly:
+```
+ping web01.practice.local
+```
+the lookup failed:
+```
+ping: web01.practice.local: Name or service not known
+```
+
+#### Investigation
+
+I checked the system DNS configuration:
+```
+cat /etc/resolv.conf
+```
+Initially the file contained:
+```
+nameserver 192.168.100.254
+nameserver 10.0.2.3
+```
+
+This meant the operating system was still using the dnsmasq server and the VirtualBox NAT DNS server rather than the new BIND server.
+
+I attempted to edit /etc/resolv.conf but discovered the file was protected.
+
+After becoming root, I checked the file attributes:
+```
+lsattr /etc/resolv.conf
+```
+Result:
+```
+----i---------e------- /etc/resolv.conf
+```
+The i flag indicates that the file is immutable, meaning it cannot be modified even by the root user until the attribute is removed.
+
+#### Solution
+
+The DNS configuration was updated to include the BIND server:
+```
+nameserver 192.168.100.250 # BIND nameserver
+nameserver 192.168.100.254 # dnsmasq nameserver
+nameserver 10.0.2.3 # VirtualBox NAT DNS
+```
+This configuration allows:
+
+* BIND to act as the primary DNS server.
+* dnsmasq to act as a secondary DNS server.
+* The VirtualBox NAT DNS server to provide fallback resolution for external domains.
