@@ -19,6 +19,7 @@ Topics covered included:
 * User authentication and authorisation concepts
 
 The session demonstrated how DNS and DHCP services can be automated using Ansible and how these services work together to support network communication.
+
 ---
 
 ## Personal Notes and research following this session
@@ -47,16 +48,17 @@ I also researched the DHCP DORA process:
 
 This helped me better understand the packet captures seen using tcpdump.
 
-# Relevance to Coursework
+### Relevance to Coursework
 The Sirius Cybernetics case study specifically requires DNS and DHCP services to support a growing number of regional offices.
 
 The technologies explored in this session demonstrate how network services can be centrally managed and automated using Infrastructure as Code principles, reducing the need for manual configuration as the organisation expands.
+
 ---
 
 ## Exercises and results
 *What exercises did you complete. What results. Screen shots and notes*
 
-# Exercise 3.1 - DNS using dnsmasq
+## Exercise 3.1 - DNS using dnsmasq
 I deployed a dnsmasq DNS server using Ansible on the ansible-controller machine.
 
 I tested DNS resolution using:
@@ -78,7 +80,7 @@ Example:
 ssh ansible@ubuntu-1.lab.example.com
 ```
 
-# Exercise 3.2 - DHCP using dnsmasq
+## Exercise 3.2 - DHCP using dnsmasq
 I deployed a dnsmasq DHCP server using Ansible and observed DHCP communication using tcpdump.
 
 Command used:
@@ -96,7 +98,7 @@ I observed the DHCP process:
 
 The client machines successfully received IP addresses from the DHCP server.
 
-# Exercise 3.3 - BIND DNS Server
+## Exercise 3.3 - BIND DNS Server
 I deployed a BIND9 DNS server using Ansible on the ubuntu_bind virtual machine.
 
 I tested DNS resolution using:
@@ -114,6 +116,7 @@ Results:
 * Forward and reverse lookup zones were automatically generated from the Ansible inventory.
 
 This demonstrated a more advanced and scalable DNS implementation compared to dnsmasq.
+
 ---
 
 ## Summary of learning
@@ -128,4 +131,5 @@ Using tcpdump allowed me to see DHCP traffic in real time and better understand 
 I also learned the differences between dnsmasq and BIND9 and gained experience deploying and managing both solutions using Infrastructure as Code techniques.
 
 The most important lesson from this session was understanding how DNS and DHCP work together to support network infrastructure and how automation can simplify the management of these services within larger environments. These concepts will be valuable when designing the automated infrastructure solution for the Sirius Cybernetics coursework scenario.
+
 ---
