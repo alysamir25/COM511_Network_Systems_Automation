@@ -1387,45 +1387,39 @@ The challenge was to configure the system to use the new BIND DNS server `192.16
 
 #### Initial Testing
 
-I first verified that the BIND DNS server could resolve internal hostnames:
+I first verified that the BIND DNS server could resolve internal hostnames and it verified `192.168.100.10`:
 ```
-nslookup web01.practice.local 192.168.100.250
-```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ nslookup web01.practice.local 192.168.100.250
+Server:         192.168.100.250
+Address:        192.168.100.250#53
 
-#### Output:
-
-```
-Name: web01.practice.local
+Name:   web01.practice.local
 Address: 192.168.100.10
 ```
 
 This confirmed that the BIND server was functioning correctly and contained the appropriate DNS records generated from the Ansible inventory.
 
-However, when I attempted to use the hostname directly:
+However, when I attempted to use the hostname directly, the lookup failed:
 ```
-ping web01.practice.local
-```
-the lookup failed:
-```
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ ping web01.practice.local
 ping: web01.practice.local: Name or service not known
 ```
 
 #### Investigation
 
-I checked the system DNS configuration:
+I checked the system DNS configuration, Initially the file contained:
 ```
-cat /etc/resolv.conf
-```
-Initially the file contained:
-```
-nameserver 192.168.100.254
-nameserver 10.0.2.3
+ansible@ansible-controller:/vagrant/ansible/project-ansible3-2$ cat /etc/resolv.conf
+nameserver 192.168.100.254  # new dnsmasq nameserver
+nameserver 10.0.2.3   # nameserver used in virtualbox NAT network
 ```
 
 This meant the operating system was still using the dnsmasq server and the VirtualBox NAT DNS server rather than the new BIND server.
 
 I attempted to edit /etc/resolv.conf but discovered the file was protected.
+```
 
+```
 After becoming root, I checked the file attributes:
 ```
 lsattr /etc/resolv.conf
@@ -1435,6 +1429,13 @@ Result:
 ----i---------e------- /etc/resolv.conf
 ```
 The i flag indicates that the file is immutable, meaning it cannot be modified even by the root user until the attribute is removed.
+
+So I had to remove the immutable flag and retry to edit the file, and it worked
+```
+vagrant@ansible-controller:~$ sudo su -
+root@ansible-controller:~# chattr -i /etc/resolv.conf
+root@ansible-controller:~# nano /etc/resolv.conf
+```
 
 #### Solution
 
@@ -1449,3 +1450,22 @@ This configuration allows:
 * BIND to act as the primary DNS server.
 * dnsmasq to act as a secondary DNS server.
 * The VirtualBox NAT DNS server to provide fallback resolution for external domains.
+
+Both ping and nslookup to `web01.practice.local` worked successfully:
+```
+ansible@ansible-controller:/home/vagrant$ ping web01.practice.local
+PING web01.practice.local (192.168.100.10) 56(84) bytes of data.
+64 bytes from 192.168.100.10: icmp_seq=1 ttl=64 time=9.43 ms
+64 bytes from 192.168.100.10: icmp_seq=2 ttl=64 time=7.37 ms
+64 bytes from 192.168.100.10: icmp_seq=3 ttl=64 time=3.10 ms
+^C
+--- web01.practice.local ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2018ms
+rtt min/avg/max/mdev = 3.102/6.634/9.430/2.635 ms
+ansible@ansible-controller:/home/vagrant$ nslookup web01.practice.local
+Server:         192.168.100.250
+Address:        192.168.100.250#53
+
+Name:   web01.practice.local
+Address: 192.168.100.10
+```
