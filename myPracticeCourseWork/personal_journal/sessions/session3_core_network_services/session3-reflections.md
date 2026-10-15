@@ -133,3 +133,12 @@ I also learned the differences between dnsmasq and BIND9 and gained experience d
 The most important lesson from this session was understanding how DNS and DHCP work together to support network infrastructure and how automation can simplify the management of these services within larger environments. These concepts will be valuable when designing the automated infrastructure solution for the Sirius Cybernetics coursework scenario.
 
 ---
+
+### Extra Challenge
+#### Learning Outcome
+This exercise helped me understand how Linux determines which DNS server to use through /etc/resolv.conf. I also learned that multiple DNS servers can be configured to provide redundancy and failover.
+
+The exercise demonstrated the difference between successfully querying a DNS server directly using nslookup and configuring the operating system to use that DNS server automatically for applications such as ping, ssh, and web browsing.
+
+#### Coursework Relevance
+This is relevant to the Sirius Cybernetics scenario because a growing organisation would require resilient DNS infrastructure. Using multiple DNS servers provides redundancy and ensures that hostname resolution continues even if one DNS server becomes unavailable.
