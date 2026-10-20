@@ -22,5 +22,12 @@ autoinstall:
     - git
     - nano
   late-commands:
-    - echo 'ansible ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/99_ansible
+    # optional change ssh port to 8022
     # - sed -i 's/#Port 22/Port 8022/g' /target/etc/ssh/sshd_config
+    
+    # ansible user does not need password for sudo commands
+    - echo 'ansible ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/99_ansible
+    
+    # at end of installation, shutdown the VM 
+    - sudo shutdown now
+    

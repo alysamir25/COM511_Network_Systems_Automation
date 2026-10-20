@@ -113,7 +113,6 @@
             <li>docker desktop examples</li>
          </td>
          <td>
-            Craig not here Monday 2nd
          </td>
       </tr>
       <tr>
@@ -137,6 +136,9 @@
             <li>monitoring</li>
          </td>
          <td>
+         This concerns the Monday class for COM511 Network Systems Automation on Monday 2nd November 10.00-13.00.<BR>
+         I will not be available to teach in the morning but the JM406 lab will be available if you want to carry on working to catch up on your work.<BR>
+         I am proposing that I will run a class in the afternoon of Monday 2nd at 2.00pm in the JM413 Smart Lab (opposite JM406). 
          </td>
       </tr>
       <tr>
