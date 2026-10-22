@@ -503,7 +503,6 @@ After the TFTP fix, the client successfully downloaded the PXE boot files and st
 <img width="795" height="715" alt="Screenshot 2026-10-22 090918" src="https://github.com/user-attachments/assets/1b66fa7e-8649-447a-8939-9d40c204998a" />
 <img width="1026" height="842" alt="Screenshot 2026-10-22 092109" src="https://github.com/user-attachments/assets/88aeae4e-192b-489b-aa92-ecac88d5b942" />
 <img width="1022" height="867" alt="Screenshot 2026-10-22 092239" src="https://github.com/user-attachments/assets/9454ac9f-3f15-451f-bdac-2a3da686328d" />
-<img width="1032" height="870" alt="Screenshot 2026-10-22 092326" src="https://github.com/user-attachments/assets/a937ef07-8fd5-4eab-b42e-58693b4843fc" />
 <img width="1022" height="870" alt="Screenshot 2026-10-22 092342" src="https://github.com/user-attachments/assets/af3e91c9-e23e-4c1f-b88e-d2423ed7d5ef" />
 <img width="1020" height="875" alt="Screenshot 2026-10-22 092614" src="https://github.com/user-attachments/assets/c36720fe-953c-420e-a4bb-0eed0c1ea37a" />
 
