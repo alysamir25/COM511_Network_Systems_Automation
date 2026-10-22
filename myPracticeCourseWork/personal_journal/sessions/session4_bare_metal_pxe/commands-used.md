@@ -748,37 +748,37 @@ Recording screens:           1
 Configured memory balloon:   0MB
 ```
 The virtual disk was still attached:
-``
+```
 Location: "C:\Users\Admin\VirtualBox VMs\client_pxe_client_1792656383227_44173\rockylinux-9.6-amd64-disk001.vmdk"
-``
+```
 The boot order was:
-``
+```
 Boot Device 1:               Network
 Boot Device 2:               Not Assigned
 Boot Device 3:               Not Assigned
 Boot Device 4:               Not Assigned
-``
+```
 The first network adapter was reported as NAT:
-``
+```
 NIC 1: MAC: 0800276F16B4, Attachment: NAT, Cable connected: on
-``
+```
 The duplicate SSH rule was confirmed:
-``
+```
 NIC 1 Rule(0): name = ssh, protocol = tcp, host ip = 127.0.0.1,
 host port = 2200, guest ip = , guest port = 22
-``
+```
 This showed that the VM still existed and had a virtual disk, but it was configured to attempt network boot first and had a pre-existing SSH forwarding rule.
 
 ### 4.5 Solution: remove the duplicate SSH forwarding rule
-``
+```
 PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session4\vagrant-examples\vagrant-pxe\client> & "$env:ProgramFiles\Oracle\VirtualBox\VBoxManage.exe" modifyvm e609ab21-f6ef-4736-b38e-f41ec0c12179 --natpf1 delete ssh
-``
+```
 This removes the existing NAT forwarding rule named ssh. It does not delete the VM or its virtual disk.
 
 Then run:
-``
+```
 vagrant up
-``
+```
 This time, Vagrant got past the duplicate-rule error and started the VM.
 ```
 PS C:\devel\gitrepos\COM511_Network_Systems_Automation\myPracticeCourseWork\session4\vagrant-examples\vagrant-pxe\client> vagrant up
@@ -899,9 +899,9 @@ Result: Local console login into the installed Ubuntu system was successful.
 <img width="1022" height="872" alt="Screenshot 2026-10-22 095625" src="https://github.com/user-attachments/assets/7f810516-6a0e-40aa-8f47-fad73209412b" />
 
 Once logged in to Ubuntu as ansible, the following command was run:
-``
+```
 ip addr
-``
+```
 The output was:
 ```
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
@@ -919,13 +919,13 @@ The output was:
        valid_lft forever preferred_lft forever
 ```
 The MAC address matches the MAC address reported by iPXE earlier:
-``
+```
 net0: 08:00:27:6f:16:b4
-``
+```
 It also matches the NIC MAC address shown by VirtualBox:
-``
+```
 NIC 1: MAC: 0800276F16B4
-``
+```
 The MAC addresses are the same, with VirtualBox omitting the colons in its output.
 
 This provides strong confirmation that the client interface seen during PXE boot is the same interface used by the installed Ubuntu system.
@@ -935,25 +935,25 @@ This provides strong confirmation that the client interface seen during PXE boot
 # Useful commands for future checks
 
 Show interfaces, IPv4 addresses and MAC addresses in a compact format:
-``
+```
 ip -br addr
-``
+```
 Show the MAC address of a specific interface:
-``
+```
 cat /sys/class/net/enp0s3/address
-``
+```
 Expected output:
-``
+```
 08:00:27:6f:16:b4
-``
+```
 Show only the IPv4 address for enp0s3:
-``
+```
 ip -4 addr show enp0s3
-``
+```
 Check connectivity to the PXE server:
-``
+```
 ping -c 4 192.168.0.254
-``
+```
 The ping command was not yet recorded as tested, so its result must be checked independently.
 
 
