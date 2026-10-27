@@ -236,7 +236,8 @@
          </td>
          <td>
          </td>
-         <td>Craig Possibley not here 14th Dec</td>
+         <td>
+         </td>
       </tr>
       <tr>
          <td>

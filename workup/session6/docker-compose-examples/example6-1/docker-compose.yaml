@@ -1,0 +1,18 @@
+---
+
+services:
+  apache-1:
+    build:
+      context: /container-fs/apache2      # Looks for your local Dockerfile
+    image: my-apache2                     # Assigns this exact name to the built image
+    container_name: apache-1
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    
+  apache-2:
+    image: my-apache2                     # uses the imge you built in the previous step
+    container_name: apache-2
+    ports:
+      - "8082:80"
+    restart: unless-stopped
