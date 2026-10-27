@@ -1,0 +1,11 @@
+---
+- debug:
+    msg: "Running tasks for  OS Family: {{ ansible_facts['os_family'] }}"
+
+- name: Load OS specific tasks (RHEL)
+  include_tasks: Rhel.yml
+  when: ansible_facts["os_family"] == 'RedHat'
+
+- name: Load OS specific tasks (Debian)
+  include_tasks: Debian.yml
+  when: ansible_facts["os_family"] == 'Debian'
