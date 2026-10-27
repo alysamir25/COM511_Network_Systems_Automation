@@ -1,0 +1,527 @@
+```
+ansible@pxe-server:/vagrant/ansible$ ansible -i inventory2.ini all -m ping
+[WARNING]: Unable to parse /vagrant/ansible/inventory2.ini as an inventory source
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+ansible@pxe-server:/vagrant/ansible$ cd project-ansible2-1
+ansible@pxe-server:/vagrant/ansible/project-ansible2-1$ ansible -i inventory2.ini all -m ping
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+^[[27;1R[ERROR]: Task failed: Failed to connect to the host via ssh: ssh: connect to host 192.168.0.10 port 22: Connection refused
+Origin: <adhoc 'ping' task>
+
+{'action': 'ping', 'args': {}, 'timeout': 0, 'async_val': 0, 'poll': 15}
+
+pxe_client | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Task failed: Failed to connect to the host via ssh: ssh: connect to host 192.168.0.10 port 22: Connection refused",
+    "unreachable": true
+}
+[WARNING]: Host 'pxe_server' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+pxe_server | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.12"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ansible@pxe-server:/vagrant/ansible/project-ansible2-1$ ssh 192.168.0.10
+ansible@192.168.0.10's password: 
+Welcome to Ubuntu 24.04.5 LTS (GNU/Linux 6.8.0-139-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Fri 23 Oct 00:09:08 UTC 2026
+
+  System load: 0.23               Memory usage: 2%   Processes:       128
+  Usage of /:  10.8% of 60.72GB   Swap usage:   0%   Users logged in: 0
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Fri Oct 23 00:09:13 2026 from 192.168.0.254
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ansible@ubuntu24pxe1:~$ exit
+logout
+Connection to 192.168.0.10 closed.
+ansible@pxe-server:/vagrant/ansible/project-ansible2-1$ ansible -i inventory2.ini all -m ping
+[WARNING]: Ansible is being run in a world writable directory (/vagrant/ansible/project-ansible2-1), ignoring it as an ansible.cfg source. For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+[WARNING]: Host 'pxe_server' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+pxe_server | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.12"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+[WARNING]: Host 'pxe_client' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+pxe_client | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.12"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ansible@pxe-server:/vagrant/ansible/project-ansible2-1$ cd ..
+ansible@pxe-server:/vagrant/ansible$ cd project-ansible2-2
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ^[[200~ansible-playbook playbook-rocky-apache.yml -i inventory.ini
+-bash: $'\E[200~ansible-playbook': command not found
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-rocky-apache.yml -i inventory.ini
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+[WARNING]: Could not match supplied host pattern, ignoring: rocky_hosts
+
+PLAY [rocky_hosts] ***********************************************************************************************************
+skipping: no hosts matched
+
+PLAY RECAP *******************************************************************************************************************
+
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-all-apache.yml -i inventory.ini
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+
+PLAY [Install apache on all web servers] *************************************************************************************
+
+TASK [Gathering Facts] *******************************************************************************************************
+[WARNING]: Host 'pxe_server' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_server]
+[WARNING]: Host 'pxe_client' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_client]
+
+TASK [installApache : debug] *************************************************************************************************
+ok: [pxe_server] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+ok: [pxe_client] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+
+TASK [installApache : Load OS specific tasks (RHEL)] *************************************************************************
+skipping: [pxe_server]
+skipping: [pxe_client]
+
+TASK [installApache : Load OS specific tasks (Debian)] ***********************************************************************
+included: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml for pxe_server, pxe_client
+
+TASK [installApache : install apache2] ***************************************************************************************
+[WARNING]: Failed to update cache after 1 retries due to , retrying
+[WARNING]: Sleeping for 2 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 2 retries due to , retrying
+[WARNING]: Sleeping for 3 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 3 retries due to , retrying
+[WARNING]: Sleeping for 5 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 4 retries due to , retrying
+[WARNING]: Sleeping for 9 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 5 retries due to , retrying
+[WARNING]: Sleeping for 13 seconds, before attempting to refresh the cache again
+[ERROR]: Task failed: Module failed: Failed to update apt cache after 5 retries: 
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:3:7
+
+1 ---
+2
+3     - name: install apache2
+        ^ column 7
+
+fatal: [pxe_client]: FAILED! => {"changed": false, "msg": "Failed to update apt cache after 5 retries: "}
+changed: [pxe_server]                                      
+
+TASK [installApache : Start Apache] ******************************************************************************************
+[ERROR]: Task failed: Module failed: Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.
+See "systemctl status apache2.service" and "journalctl -xeu apache2.service" for details.
+
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:10:7
+
+ 8       become: true
+ 9
+10     - name: Start Apache
+         ^ column 7
+
+fatal: [pxe_server]: FAILED! => {"changed": false, "msg": "Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.\nSee \"systemctl status apache2.service\" and \"journalctl -xeu apache2.service\" for details.\n"}
+
+PLAY RECAP *******************************************************************************************************************
+pxe_client                 : ok=3    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+pxe_server                 : ok=4    changed=1    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ssh 192.168.0.10
+ansible@192.168.0.10's password: 
+Welcome to Ubuntu 24.04.5 LTS (GNU/Linux 6.8.0-139-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Mon 26 Oct 12:18:20 UTC 2026
+
+  System load: 0.15               Memory usage: 2%   Processes:       126
+  Usage of /:  10.9% of 60.72GB   Swap usage:   0%   Users logged in: 0
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Mon Oct 26 12:14:33 2026 from 192.168.0.254
+ansible@ubuntu24pxe1:~$ ping google.com
+ping: google.com: Temporary failure in name resolution
+ansible@ubuntu24pxe1:~$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+From 192.168.0.10 icmp_seq=1 Destination Host Unreachable
+From 192.168.0.10 icmp_seq=2 Destination Host Unreachable
+From 192.168.0.10 icmp_seq=3 Destination Host Unreachable
+^C
+--- 8.8.8.8 ping statistics ---
+6 packets transmitted, 0 received, +3 errors, 100% packet loss, time 5135ms
+pipe 4
+ansible@ubuntu24pxe1:~$ ping 192.168.10.254
+PING 192.168.10.254 (192.168.10.254) 56(84) bytes of data.
+^C
+--- 192.168.10.254 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2117ms
+
+ansible@ubuntu24pxe1:~$ ping 192.168.0.254
+PING 192.168.0.254 (192.168.0.254) 56(84) bytes of data.
+64 bytes from 192.168.0.254: icmp_seq=1 ttl=64 time=7.77 ms
+64 bytes from 192.168.0.254: icmp_seq=2 ttl=64 time=7.95 ms
+64 bytes from 192.168.0.254: icmp_seq=3 ttl=64 time=6.00 ms
+
+--- 192.168.0.254 ping statistics ---^C
+3 packets transmitted, 3 received, 0% packet loss, time 2007ms
+rtt min/avg/max/mdev = 6.000/7.239/7.946/0.879 ms
+ansible@ubuntu24pxe1:~$ cat /etc/resolv.conf 
+# This is /run/systemd/resolve/stub-resolv.conf managed by man:systemd-resolved(8).
+# Do not edit.
+#
+# This file might be symlinked as /etc/resolv.conf. If you're looking at
+# /etc/resolv.conf and seeing this text, you have followed the symlink.
+#
+# This is a dynamic resolv.conf file for connecting local clients to the
+# internal DNS stub resolver of systemd-resolved. This file lists all
+# configured search domains.
+#
+# Run "resolvectl status" to see details about the uplink DNS servers
+# currently in use.
+#
+# Third party programs should typically not access this file directly, but only
+# through the symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a
+# different way, replace this symlink by a static file or a different symlink.
+#
+# See man:systemd-resolved.service(8) for details about the supported modes of
+# operation for /etc/resolv.conf.
+
+nameserver 127.0.0.53
+options edns0 trust-ad
+search .
+ansible@ubuntu24pxe1:~$ nano /etc/resolv.conf 
+ansible@ubuntu24pxe1:~$ sudo su
+root@ubuntu24pxe1:/home/ansible# nano /etc/resolv.conf
+root@ubuntu24pxe1:/home/ansible# exit
+exit
+ansible@ubuntu24pxe1:~$ ping google.com
+
+ping: google.com: Temporary failure in name resolution
+ansible@ubuntu24pxe1:~$ 
+ansible@ubuntu24pxe1:~$ cd /vagrant/ansible
+-bash: cd: /vagrant/ansible: No such file or directory
+ansible@ubuntu24pxe1:~$ exit
+logout
+Connection to 192.168.0.10 closed.
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-all-apache.yml -i inventory.ini
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+
+PLAY [Install apache on all web servers] *************************************************************************************
+
+TASK [Gathering Facts] *******************************************************************************************************
+[WARNING]: Host 'pxe_server' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_server]
+[WARNING]: Host 'pxe_client' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_client]
+
+TASK [installApache : debug] *************************************************************************************************
+ok: [pxe_server] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+ok: [pxe_client] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+
+TASK [installApache : Load OS specific tasks (RHEL)] *************************************************************************
+skipping: [pxe_server]
+skipping: [pxe_client]
+
+TASK [installApache : Load OS specific tasks (Debian)] ***********************************************************************
+included: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml for pxe_server, pxe_client
+
+TASK [installApache : install apache2] ***************************************************************************************
+ok: [pxe_server]
+[WARNING]: Failed to update cache after 1 retries due to , retrying
+[WARNING]: Sleeping for 2 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 2 retries due to , retrying
+[WARNING]: Sleeping for 3 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 3 retries due to , retrying
+[WARNING]: Sleeping for 5 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 4 retries due to , retrying
+[WARNING]: Sleeping for 9 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 5 retries due to , retrying
+[WARNING]: Sleeping for 13 seconds, before attempting to refresh the cache again
+[ERROR]: Task failed: Module failed: Failed to update apt cache after 5 retries: 
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:3:7
+
+1 ---
+2
+3     - name: install apache2
+        ^ column 7
+
+fatal: [pxe_client]: FAILED! => {"changed": false, "msg": "Failed to update apt cache after 5 retries: "}
+
+TASK [installApache : Start Apache] ******************************************************************************************
+[ERROR]: Task failed: Module failed: Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.
+See "systemctl status apache2.service" and "journalctl -xeu apache2.service" for details.
+
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:10:7
+
+ 8       become: true
+ 9
+10     - name: Start Apache
+         ^ column 7
+
+fatal: [pxe_server]: FAILED! => {"changed": false, "msg": "Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.\nSee \"systemctl status apache2.service\" and \"journalctl -xeu apache2.service\" for details.\n"}
+
+PLAY RECAP *******************************************************************************************************************
+pxe_client                 : ok=3    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+pxe_server                 : ok=4    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ ansible-playbook playbook-all-apache.yml -i inventory.ini -vvv
+ansible-playbook [core 2.21.5]
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/ansible/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3/dist-packages/ansible
+  ansible collection location = /home/ansible/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible-playbook
+  python version = 3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0] (/usr/bin/python3)
+  jinja version = 3.1.2
+  pyyaml version = 6.0.1 (with libyaml v0.2.5)
+Using /etc/ansible/ansible.cfg as config file
+host_list declined parsing /vagrant/ansible/project-ansible2-2/inventory.ini as it did not pass its verify_file() method
+auto declined parsing /vagrant/ansible/project-ansible2-2/inventory.ini as it did not pass its verify_file() method
+yaml declined parsing /vagrant/ansible/project-ansible2-2/inventory.ini as it did not pass its verify_file() method
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+Parsed /vagrant/ansible/project-ansible2-2/inventory.ini inventory source with ini plugin
+Skipping callback 'minimal', as we already have a stdout callback.
+Skipping callback 'oneline', as we already have a stdout callback.
+
+PLAYBOOK: playbook-all-apache.yml ********************************************************************************************
+1 plays in playbook-all-apache.yml
+
+PLAY [Install apache on all web servers] *************************************************************************************
+
+TASK [Gathering Facts] *******************************************************************************************************
+task path: /vagrant/ansible/project-ansible2-2/playbook-all-apache.yml:3
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'echo ~ansible'"'"''
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'echo ~ansible'"'"''
+<192.168.0.254> (0, b'/home/ansible\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'( umask 77 && mkdir -p "` echo /home/ansible/.ansible/tmp `"&& mkdir "` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565 `" && echo ansible-tmp-1793018461.6533031-4115-159267252604565="` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565 `" )'"'"''
+<192.168.0.254> (0, b'ansible-tmp-1793018461.6533031-4115-159267252604565=/home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565\n', b'')
+<pxe_server> Attempting python interpreter discovery.
+<192.168.0.10> (0, b'/home/ansible\n', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'( umask 77 && mkdir -p "` echo /home/ansible/.ansible/tmp `"&& mkdir "` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191 `" && echo ansible-tmp-1793018462.1042838-4116-26002849413191="` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191 `" )'"'"''
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'echo FOUND; command -v '"'"'"'"'"'"'"'"'python3.14'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.13'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.12'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.11'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.10'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.9'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'/usr/bin/python3'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3'"'"'"'"'"'"'"'"'; echo ENDFOUND'"'"''
+<192.168.0.254> (0, b'FOUND\n/usr/bin/python3.12\n/usr/bin/python3\n/usr/bin/python3\nENDFOUND\n', b'')
+Using module file /usr/lib/python3/dist-packages/ansible/modules/setup.py
+<192.168.0.254> PUT /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmp4p8iog_o TO /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/AnsiballZ_setup.py
+<192.168.0.254> SSH: EXEC sftp -o BatchMode=no -b - -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 '[192.168.0.254]'
+<192.168.0.10> (0, b'ansible-tmp-1793018462.1042838-4116-26002849413191=/home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191\n', b'')
+<pxe_client> Attempting python interpreter discovery.
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'echo FOUND; command -v '"'"'"'"'"'"'"'"'python3.14'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.13'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.12'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.11'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.10'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3.9'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'/usr/bin/python3'"'"'"'"'"'"'"'"'; command -v '"'"'"'"'"'"'"'"'python3'"'"'"'"'"'"'"'"'; echo ENDFOUND'"'"''
+<192.168.0.10> (0, b'FOUND\n/usr/bin/python3.12\n/usr/bin/python3\n/usr/bin/python3\nENDFOUND\n', b'')
+Using module file /usr/lib/python3/dist-packages/ansible/modules/setup.py
+<192.168.0.10> PUT /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpdr5m1g70 TO /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/AnsiballZ_setup.py
+<192.168.0.10> SSH: EXEC sftp -o BatchMode=no -b - -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 '[192.168.0.10]'
+<192.168.0.254> (0, b'sftp> put /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmp4p8iog_o /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/AnsiballZ_setup.py\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'chmod u+rwx /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/ /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/AnsiballZ_setup.py'"'"''
+<192.168.0.254> (0, b'', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 -tt 192.168.0.254 '/bin/sh -c '"'"'sudo -H -S -n  -u root /bin/sh -c '"'"'"'"'"'"'"'"'echo BECOME-SUCCESS-abjiyvvdpzvdckywofdkuirjrxivnxxw ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/AnsiballZ_setup.py'"'"'"'"'"'"'"'"''"'"''
+<192.168.0.10> (0, b'sftp> put /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpdr5m1g70 /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/AnsiballZ_setup.py\n', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'chmod u+rwx /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/ /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/AnsiballZ_setup.py'"'"''
+<192.168.0.254> Escalation succeeded
+<192.168.0.10> (0, b'', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 -tt 192.168.0.10 '/bin/sh -c '"'"'sudo -H -S -n  -u root /bin/sh -c '"'"'"'"'"'"'"'"'echo BECOME-SUCCESS-buhqvrgbfxmwpxbejcunmmbbtldkqnrd ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/AnsiballZ_setup.py'"'"'"'"'"'"'"'"''"'"''
+<192.168.0.10> Escalation succeeded
+<192.168.0.10> (0, b'\r\n{"ansible_facts": {"ansible_python": {"version": {"major": 3, "minor": 12, "micro": 3, "releaselevel": "final", "serial": 0}, "version_info": [3, 12, 3, "final", 0], "executable": "/usr/bin/python3.12", "has_sslcontext": true, "type": "cpython"}, "ansible_distribution": "Ubuntu", "ansible_distribution_release": "noble", "ansible_distribution_version": "24.04", "ansible_distribution_major_version": "24", "ansible_distribution_file_path": "/etc/os-release", "ansible_distribution_file_variety": "Debian", "ansible_distribution_file_parsed": true, "ansible_os_family": "Debian", "ansible_system": "Linux", "ansible_kernel": "6.8.0-139-generic", "ansible_kernel_version": "#139-Ubuntu SMP PREEMPT_DYNAMIC Sat Aug  1 03:52:05 UTC 2026", "ansible_machine": "x86_64", "ansible_python_version": "3.12.3", "ansible_fqdn": "ubuntu24pxe1", "ansible_hostname": "ubuntu24pxe1", "ansible_nodename": "ubuntu24pxe1", "ansible_domain": "", "ansible_userspace_bits": "64", "ansible_architecture": "x86_64", "ansible_userspace_architecture": "x86_64", "ansible_machine_id": "2bd15aa612bd41598d64543897d2ddf0", "ansible_virtualization_role": "guest", "ansible_virtualization_type": "virtualbox", "ansible_virtualization_tech_guest": ["virtualbox"], "ansible_virtualization_tech_host": [], "ansible_ssh_host_key_rsa_public": "AAAAB3NzaC1yc2EAAAADAQABAAABgQDU39wUuJeebk6kiC0j7FKe01WlmghDldVF3gi915G3ILP76CBzL1PzoozXTWo9r5S/8iyb9XS+E+EIqVz+chdYQHhZSZ3hnfsMpR58alWBwO+Q07lOkcbvkySsLRQTXJZSqiWsP9TnEm4qdnQlX8btMAdIJ/9jlm8KSMr+CkBt6XEKmUuhmacQd4TSrSJLHuBlDk1AA1XkbcEd4LE7utDlveu4uekyGtZ+Wpl9gaF61ZkGAgiaVON5e4tbsEm3pm8IRr/Qfp5dCsgsR+nO7d4eUaDMsYYTJPjdwI3cbYCtRzd956oJsAqiLG7lGi8Q+d+cVskJQPXDEgwnl1v8PFrnxsuN1GHu/wqNuSmZ2HiIQ6mhAeP3llX1NLtx4hK58WSlfYBx9/Pb/fVoM/uzik3gNrs1kdEJTsO1m8YlcKTiRR1NprcUXeObQvmgHXKKQrTxbHj/qcYsfn/jEYN1LJec7LQ0xIiGV8MmNrUdAC0mM/9CVPCQwbn+E+HZNTucKtE=", "ansible_ssh_host_key_rsa_public_keytype": "ssh-rsa", "ansible_ssh_host_key_ecdsa_public": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLXXHG/JysY5F8UMTVKxLSUeX9PJOMdXxbhFQhnCLoxJSTyizldsNcY+SXEdrJiHsMixn1h3idGHLUcPxy30t3I=", "ansible_ssh_host_key_ecdsa_public_keytype": "ecdsa-sha2-nistp256", "ansible_ssh_host_key_ed25519_public": "AAAAC3NzaC1lZDI1NTE5AAAAIFhya9FZdVIpFBnZ4xKArr3xpVaSYMRinMGxRFZhaDwv", "ansible_ssh_host_key_ed25519_public_keytype": "ssh-ed25519", "ansible_apparmor": {"status": "enabled"}, "ansible_hostnqn": "", "ansible_user_id": "root", "ansible_user_uid": 0, "ansible_user_gid": 0, "ansible_user_gecos": "root", "ansible_user_dir": "/root", "ansible_user_shell": "/bin/bash", "ansible_real_user_id": 0, "ansible_effective_user_id": 0, "ansible_real_group_id": 0, "ansible_effective_group_id": 0, "ansible_system_capabilities_enforced": "False", "ansible_system_capabilities": [], "ansible_fibre_channel_wwn": [], "ansible_systemd": {"features": "+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified", "version": 255}, "ansible_local": {}, "ansible_interfaces": ["enp0s3", "lo"], "ansible_lo": {"device": "lo", "mtu": 65536, "active": true, "type": "loopback", "promisc": false, "ipv4": {"address": "127.0.0.1", "broadcast": "", "netmask": "255.0.0.0", "network": "127.0.0.0", "prefix": "8"}, "ipv6": [{"address": "::1", "prefix": "128", "scope": "host"}], "features": {"rx_checksumming": "on [fixed]", "tx_checksumming": "on", "tx_checksum_ipv4": "off [fixed]", "tx_checksum_ip_generic": "on [fixed]", "tx_checksum_ipv6": "off [fixed]", "tx_checksum_fcoe_crc": "off [fixed]", "tx_checksum_sctp": "on [fixed]", "scatter_gather": "on", "tx_scatter_gather": "on [fixed]", "tx_scatter_gather_fraglist": "on [fixed]", "tcp_segmentation_offload": "on", "tx_tcp_segmentation": "on", "tx_tcp_ecn_segmentation": "on", "tx_tcp_mangleid_segmentation": "on", "tx_tcp6_segmentation": "on", "generic_segmentation_offload": "on", "generic_receive_offload": "on", "large_receive_offload": "off [fixed]", "rx_vlan_offload": "off [fixed]", "tx_vlan_offload": "off [fixed]", "ntuple_filters": "off [fixed]", "receive_hashing": "off [fixed]", "highdma": "on [fixed]", "rx_vlan_filter": "off [fixed]", "vlan_challenged": "on [fixed]", "tx_lockless": "on [fixed]", "netns_local": "on [fixed]", "tx_gso_robust": "off [fixed]", "tx_fcoe_segmentation": "off [fixed]", "tx_gre_segmentation": "off [fixed]", "tx_gre_csum_segmentation": "off [fixed]", "tx_ipxip4_segmentation": "off [fixed]", "tx_ipxip6_segmentation": "off [fixed]", "tx_udp_tnl_segmentation": "off [fixed]", "tx_udp_tnl_csum_segmentation": "off [fixed]", "tx_gso_partial": "off [fixed]", "tx_tunnel_remcsum_segmentation": "off [fixed]", "tx_sctp_segmentation": "on", "tx_esp_segmentation": "off [fixed]", "tx_udp_segmentation": "on", "tx_gso_list": "on", "fcoe_mtu": "off [fixed]", "tx_nocache_copy": "off [fixed]", "loopback": "on [fixed]", "rx_fcs": "off [fixed]", "rx_all": "off [fixed]", "tx_vlan_stag_hw_insert": "off [fixed]", "rx_vlan_stag_hw_parse": "off [fixed]", "rx_vlan_stag_filter": "off [fixed]", "l2_fwd_offload": "off [fixed]", "hw_tc_offload": "off [fixed]", "esp_hw_offload": "off [fixed]", "esp_tx_csum_hw_offload": "off [fixed]", "rx_udp_tunnel_port_offload": "off [fixed]", "tls_hw_tx_offload": "off [fixed]", "tls_hw_rx_offload": "off [fixed]", "rx_gro_hw": "off [fixed]", "tls_hw_record": "off [fixed]", "rx_gro_list": "off", "macsec_hw_offload": "off [fixed]", "rx_udp_gro_forwarding": "off", "hsr_tag_ins_offload": "off [fixed]", "hsr_tag_rm_offload": "off [fixed]", "hsr_fwd_offload": "off [fixed]", "hsr_dup_offload": "off [fixed]"}, "timestamping": [], "hw_timestamp_filters": []}, "ansible_enp0s3": {"device": "enp0s3", "macaddress": "08:00:27:6f:16:b4", "mtu": 1500, "active": true, "module": "e1000", "type": "ether", "pciid": "0000:00:03.0", "speed": 1000, "promisc": false, "ipv4": {"address": "192.168.0.10", "broadcast": "192.168.0.255", "netmask": "255.255.255.0", "network": "192.168.0.0", "prefix": "24"}, "ipv6": [{"address": "fe80::a00:27ff:fe6f:16b4", "prefix": "64", "scope": "link"}], "features": {"rx_checksumming": "off", "tx_checksumming": "on", "tx_checksum_ipv4": "off [fixed]", "tx_checksum_ip_generic": "on", "tx_checksum_ipv6": "off [fixed]", "tx_checksum_fcoe_crc": "off [fixed]", "tx_checksum_sctp": "off [fixed]", "scatter_gather": "on", "tx_scatter_gather": "on", "tx_scatter_gather_fraglist": "off [fixed]", "tcp_segmentation_offload": "on", "tx_tcp_segmentation": "on", "tx_tcp_ecn_segmentation": "off [fixed]", "tx_tcp_mangleid_segmentation": "off", "tx_tcp6_segmentation": "off [fixed]", "generic_segmentation_offload": "on", "generic_receive_offload": "on", "large_receive_offload": "off [fixed]", "rx_vlan_offload": "on", "tx_vlan_offload": "on [fixed]", "ntuple_filters": "off [fixed]", "receive_hashing": "off [fixed]", "highdma": "off [fixed]", "rx_vlan_filter": "on [fixed]", "vlan_challenged": "off [fixed]", "tx_lockless": "off [fixed]", "netns_local": "off [fixed]", "tx_gso_robust": "off [fixed]", "tx_fcoe_segmentation": "off [fixed]", "tx_gre_segmentation": "off [fixed]", "tx_gre_csum_segmentation": "off [fixed]", "tx_ipxip4_segmentation": "off [fixed]", "tx_ipxip6_segmentation": "off [fixed]", "tx_udp_tnl_segmentation": "off [fixed]", "tx_udp_tnl_csum_segmentation": "off [fixed]", "tx_gso_partial": "off [fixed]", "tx_tunnel_remcsum_segmentation": "off [fixed]", "tx_sctp_segmentation": "off [fixed]", "tx_esp_segmentation": "off [fixed]", "tx_udp_segmentation": "off [fixed]", "tx_gso_list": "off [fixed]", "fcoe_mtu": "off [fixed]", "tx_nocache_copy": "off", "loopback": "off [fixed]", "rx_fcs": "off", "rx_all": "off", "tx_vlan_stag_hw_insert": "off [fixed]", "rx_vlan_stag_hw_parse": "off [fixed]", "rx_vlan_stag_filter": "off [fixed]", "l2_fwd_offload": "off [fixed]", "hw_tc_offload": "off [fixed]", "esp_hw_offload": "off [fixed]", "esp_tx_csum_hw_offload": "off [fixed]", "rx_udp_tunnel_port_offload": "off [fixed]", "tls_hw_tx_offload": "off [fixed]", "tls_hw_rx_offload": "off [fixed]", "rx_gro_hw": "off [fixed]", "tls_hw_record": "off [fixed]", "rx_gro_list": "off", "macsec_hw_offload": "off [fixed]", "rx_udp_gro_forwarding": "off", "hsr_tag_ins_offload": "off [fixed]", "hsr_tag_rm_offload": "off [fixed]", "hsr_fwd_offload": "off [fixed]", "hsr_dup_offload": "off [fixed]"}, "timestamping": [], "hw_timestamp_filters": []}, "ansible_default_ipv4": {"interface": "enp0s3", "address": "192.168.0.10", "broadcast": "192.168.0.255", "netmask": "255.255.255.0", "network": "192.168.0.0", "prefix": "24", "macaddress": "08:00:27:6f:16:b4", "mtu": 1500, "type": "ether", "alias": "enp0s3"}, "ansible_default_ipv6": {}, "ansible_all_ipv4_addresses": ["192.168.0.10"], "ansible_all_ipv6_addresses": ["fe80::a00:27ff:fe6f:16b4"], "ansible_locally_reachable_ips": {"ipv4": ["127.0.0.0/8", "127.0.0.1", "192.168.0.10"], "ipv6": ["::1", "fe80::a00:27ff:fe6f:16b4"]}, "ansible_is_chroot": false, "ansible_cmdline": {"BOOT_IMAGE": "/vmlinuz-6.8.0-139-generic", "root": "/dev/mapper/ubuntu--vg-ubuntu--lv", "ro": true}, "ansible_proc_cmdline": {"BOOT_IMAGE": "/vmlinuz-6.8.0-139-generic", "root": "/dev/mapper/ubuntu--vg-ubuntu--lv", "ro": true}, "ansible_date_time": {"year": "2026", "month": "10", "weekday": "Monday", "weekday_number": "1", "weeknumber": "43", "day": "26", "hour": "12", "minute": "41", "second": "03", "epoch": "1793018463", "epoch_int": "1793018463", "date": "2026-10-26", "time": "12:41:03", "iso8601_micro": "2026-10-26T12:41:03.327407Z", "iso8601": "2026-10-26T12:41:03Z", "iso8601_basic": "20261026T124103327407", "iso8601_basic_short": "20261026T124103", "tz": "UTC", "tz_dst": "UTC", "tz_offset": "+0000"}, "ansible_dns": {"nameservers": ["192.168.0.254"]}, "ansible_pkg_mgr": "apt", "ansible_loadavg": {"1m": 0.0, "5m": 0.01708984375, "15m": 0.19970703125}, "ansible_lsb": {"id": "Ubuntu", "description": "Ubuntu 24.04.5 LTS", "release": "24.04", "codename": "noble", "major_release": "24"}, "ansible_fips": false, "ansible_selinux_python_present": true, "ansible_selinux": {"status": "disabled"}, "ansible_env": {"SUDO_GID": "1000", "MAIL": "/var/mail/root", "USER": "root", "HOME": "/root", "SUDO_UID": "1000", "LOGNAME": "root", "TERM": "xterm-256color", "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin", "LANG": "en_GB.UTF-8", "SUDO_COMMAND": "/bin/sh -c echo BECOME-SUCCESS-buhqvrgbfxmwpxbejcunmmbbtldkqnrd ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/AnsiballZ_setup.py", "SHELL": "/bin/bash", "SUDO_USER": "ansible", "PWD": "/home/ansible"}, "ansible_iscsi_iqn": "iqn.2004-10.com.ubuntu:01:a36c73e0ccc", "ansible_processor": ["0", "GenuineIntel", "13th Gen Intel(R) Core(TM) i7-1355U"], "ansible_flags": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "mmx", "fxsr", "sse", "sse2", "ht", "syscall", "nx", "rdtscp", "lm", "constant_tsc", "rep_good", "nopl", "xtopology", "nonstop_tsc", "cpuid", "tsc_known_freq", "pni", "pclmulqdq", "ssse3", "fma", "cx16", "pcid", "sse4_1", "sse4_2", "movbe", "popcnt", "aes", "xsave", "avx", "f16c", "rdrand", "hypervisor", "lahf_lm", "abm", "3dnowprefetch", "ibrs_enhanced", "fsgsbase", "bmi1", "avx2", "bmi2", "invpcid", "rdseed", "adx", "clflushopt", "sha_ni", "arat", "md_clear", "flush_l1d", "arch_capabilities"], "ansible_processor_count": 1, "ansible_processor_cores": 1, "ansible_processor_threads_per_core": 1, "ansible_processor_vcpus": 1, "ansible_processor_nproc": 1, "ansible_memtotal_mb": 9944, "ansible_memfree_mb": 9451, "ansible_swaptotal_mb": 4095, "ansible_swapfree_mb": 4095, "ansible_memory_mb": {"real": {"total": 9944, "used": 493, "free": 9451}, "nocache": {"free": 9723, "used": 221}, "swap": {"total": 4095, "free": 4095, "used": 0, "cached": 0}}, "ansible_bios_date": "12/01/2006", "ansible_bios_vendor": "innotek GmbH", "ansible_bios_version": "VirtualBox", "ansible_board_asset_tag": "NA", "ansible_board_name": "VirtualBox", "ansible_board_serial": "0", "ansible_board_vendor": "Oracle Corporation", "ansible_board_version": "1.2", "ansible_chassis_asset_tag": "NA", "ansible_chassis_serial": "NA", "ansible_chassis_vendor": "Oracle Corporation", "ansible_chassis_version": "NA", "ansible_form_factor": "Other", "ansible_product_name": "VirtualBox", "ansible_product_serial": "VirtualBox-e19bdffd-c08a-46bf-92eb-bff0c06106ee", "ansible_product_uuid": "fddf9be1-8ac0-bf46-92eb-bff0c06106ee", "ansible_product_version": "1.2", "ansible_system_vendor": "innotek GmbH", "ansible_devices": {"loop1": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop6": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop4": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop2": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop0": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "4096", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "dm-0": {"virtual": 1, "links": {"ids": ["dm-name-ubuntu--vg-ubuntu--lv", "dm-uuid-LVM-Hvbo84r1b779fjcPJYLFbc3Is1872VI4IglcRV7ydG90f9Rqu2A69N36A0ldfiyS"], "uuids": ["a71d5b1d-f7d1-4eb1-b563-5799bc4d4bcb"], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "serial": "VB3d80c501", "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "", "sectorsize": "512", "sectors": 130015232, "size": "62.00 GB", "host": "", "holders": []}, "loop7": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "sda": {"virtual": 1, "links": {"ids": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb"], "uuids": [], "labels": [], "masters": []}, "vendor": "ATA", "model": "VBOX HARDDISK", "sas_address": null, "sas_device_handle": null, "serial": "VB3d80c501", "removable": "0", "support_discard": "0", "partitions": {"sda2": {"links": {"ids": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2"], "uuids": ["e31b0e4e-971e-4802-8e72-a44b31f159dd"], "labels": [], "masters": []}, "start": "4096", "sectorsize": 512, "sectors": 4194304, "size": "2.00 GB", "uuid": "e31b0e4e-971e-4802-8e72-a44b31f159dd", "holders": []}, "sda3": {"links": {"ids": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "lvm-pv-uuid-1qK3sd-3MJp-2sci-8iyo-FF3p-sw8O-HS7IXo", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3"], "uuids": [], "labels": [], "masters": ["dm-0"]}, "start": "4198400", "sectorsize": 512, "sectors": 130017280, "size": "62.00 GB", "uuid": null, "holders": ["ubuntu--vg-ubuntu--lv"]}, "sda1": {"links": {"ids": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1"], "uuids": [], "labels": [], "masters": []}, "start": "2048", "sectorsize": 512, "sectors": 2048, "size": "1.00 MB", "uuid": null, "holders": []}}, "rotational": "1", "scheduler_mode": "mq-deadline", "sectorsize": "512", "sectors": 134217728, "size": "64.00 GB", "host": "SATA controller: Intel Corporation 82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode] (rev 02)", "holders": []}, "loop5": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop3": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}}, "ansible_device_links": {"ids": {"dm-0": ["dm-name-ubuntu--vg-ubuntu--lv", "dm-uuid-LVM-Hvbo84r1b779fjcPJYLFbc3Is1872VI4IglcRV7ydG90f9Rqu2A69N36A0ldfiyS"], "sda3": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "lvm-pv-uuid-1qK3sd-3MJp-2sci-8iyo-FF3p-sw8O-HS7IXo", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part3"], "sda1": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part1"], "sda2": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb-part2"], "sda": ["ata-VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-0ATA_VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-1ATA_VBOX_HARDDISK_VB3d80c501-c66112eb", "scsi-SATA_VBOX_HARDDISK_VB3d80c501-c66112eb"]}, "uuids": {"dm-0": ["a71d5b1d-f7d1-4eb1-b563-5799bc4d4bcb"], "sda2": ["e31b0e4e-971e-4802-8e72-a44b31f159dd"]}, "labels": {}, "masters": {"sda3": ["dm-0"]}}, "ansible_uptime_seconds": 1970, "ansible_lvm": {"lvs": {"ubuntu-lv": {"size_g": "62.00", "vg": "ubuntu-vg"}}, "vgs": {"ubuntu-vg": {"size_g": "62.00", "free_g": "0", "num_lvs": "1", "num_pvs": "1", "lvs": {"ubuntu-lv": {"size_g": "62.00"}}}}, "pvs": {"/dev/sda3": {"size_g": "62.00", "free_g": "0", "vg": "ubuntu-vg"}}}, "ansible_mounts": [{"mount": "/", "device": "/dev/mapper/ubuntu--vg-ubuntu--lv", "fstype": "ext4", "options": "rw,relatime", "dump": 0, "passno": 0, "size_total": 65200107520, "size_available": 54767239168, "block_size": 4096, "block_total": 15917995, "block_available": 13370908, "block_used": 2547087, "inode_total": 4063232, "inode_available": 3964412, "inode_used": 98820, "uuid": "a71d5b1d-f7d1-4eb1-b563-5799bc4d4bcb"}, {"mount": "/boot", "device": "/dev/sda2", "fstype": "ext4", "options": "rw,relatime", "dump": 0, "passno": 0, "size_total": 2040373248, "size_available": 1807716352, "block_size": 4096, "block_total": 498138, "block_available": 441337, "block_used": 56801, "inode_total": 131072, "inode_available": 130755, "inode_used": 317, "uuid": "e31b0e4e-971e-4802-8e72-a44b31f159dd"}], "ansible_service_mgr": "systemd", "gather_subset": ["all"], "module_setup": true}}\r\n', b'Shared connection to 192.168.0.10 closed.\r\n')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'rm -f -r /home/ansible/.ansible/tmp/ansible-tmp-1793018462.1042838-4116-26002849413191/ > /dev/null 2>&1'"'"''
+<192.168.0.254> (0, b'\r\n{"ansible_facts": {"ansible_iscsi_iqn": "iqn.2004-10.com.ubuntu:01:dfbae5d5031", "ansible_env": {"SUDO_GID": "1002", "MAIL": "/var/mail/root", "USER": "root", "HOME": "/root", "SUDO_UID": "800", "LOGNAME": "root", "TERM": "xterm-256color", "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin", "LANG": "en_US.UTF-8", "SUDO_COMMAND": "/bin/sh -c echo BECOME-SUCCESS-abjiyvvdpzvdckywofdkuirjrxivnxxw ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/AnsiballZ_setup.py", "SHELL": "/bin/bash", "SUDO_USER": "ansible", "PWD": "/home/ansible"}, "ansible_is_chroot": false, "ansible_distribution": "Ubuntu", "ansible_distribution_release": "noble", "ansible_distribution_version": "24.04", "ansible_distribution_major_version": "24", "ansible_distribution_file_path": "/etc/os-release", "ansible_distribution_file_variety": "Debian", "ansible_distribution_file_parsed": true, "ansible_os_family": "Debian", "ansible_user_id": "root", "ansible_user_uid": 0, "ansible_user_gid": 0, "ansible_user_gecos": "root", "ansible_user_dir": "/root", "ansible_user_shell": "/bin/bash", "ansible_real_user_id": 0, "ansible_effective_user_id": 0, "ansible_real_group_id": 0, "ansible_effective_group_id": 0, "ansible_fibre_channel_wwn": [], "ansible_system_capabilities_enforced": "False", "ansible_system_capabilities": [], "ansible_ssh_host_key_rsa_public": "AAAAB3NzaC1yc2EAAAADAQABAAABgQDKsotkoTUBw41nKSOeHqYWzY/uxfkYB9LR4Q6sgQ4BMFvBakjbhoHumIw4yZWrhQZysU1y94KoheVpwvAFXQHw2t3/WkCXMehNG6MiER8B7tRFWNvv4SXFM3R8c75+KnCpl1CncIo9DJw5244g9AgxunEysHvuBnmXTRES76eU94rK4PI943slSkLUlkZxPqQFD7cuDLzyLqNn4wsfUFq+hCGX/vkKQAt3muTHBgEHyPzRlE2t9Hm68QWoxw3e1mqtBNpmwUThyPtRtBOOOgoMdI5zxKMdZUi6trmlhD3MbfIsdqmSZni0iBh8oa3Ph0f0WEsJHnzC4f1YthV+szb2kSH2IL2LKqrwqtUjpJLnNuoU1IKxvBNDVnsQmPVfbAqONslhLqqIkl1MVGlW9F66DoUNfYoNXd1FbAm38UhMVYIX1segjQhRBv8vCYaUYnSjNpMHHk8A6+xg2wkcCWcCQt7mm8tUpplUtTZJFVttmO1wpHrywlX8J0VzqvFGKks=", "ansible_ssh_host_key_rsa_public_keytype": "ssh-rsa", "ansible_ssh_host_key_ecdsa_public": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAQ1dD1qiOu1ZmQ+Ax+tDww3Z93wRdRwygsHIemuH4zyHtPoTqAnAF+xcgOMpqcrwTCIcUcKoIDg017GSFqWy6g=", "ansible_ssh_host_key_ecdsa_public_keytype": "ecdsa-sha2-nistp256", "ansible_ssh_host_key_ed25519_public": "AAAAC3NzaC1lZDI1NTE5AAAAIAQTZjiJLRc6d+lD4ky5iXbQG4NxA1y7Xr+Wvsad0VpJ", "ansible_ssh_host_key_ed25519_public_keytype": "ssh-ed25519", "ansible_apparmor": {"status": "enabled"}, "ansible_hostnqn": "", "ansible_system": "Linux", "ansible_kernel": "6.8.0-86-generic", "ansible_kernel_version": "#87-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 22 18:03:36 UTC 2025", "ansible_machine": "x86_64", "ansible_python_version": "3.12.3", "ansible_fqdn": "pxe-server", "ansible_hostname": "pxe-server", "ansible_nodename": "pxe-server", "ansible_domain": "", "ansible_userspace_bits": "64", "ansible_architecture": "x86_64", "ansible_userspace_architecture": "x86_64", "ansible_machine_id": "aa506633e5074d0a9fd521fe2a932d13", "ansible_date_time": {"year": "2026", "month": "10", "weekday": "Monday", "weekday_number": "1", "weeknumber": "43", "day": "26", "hour": "12", "minute": "41", "second": "03", "epoch": "1793018463", "epoch_int": "1793018463", "date": "2026-10-26", "time": "12:41:03", "iso8601_micro": "2026-10-26T12:41:03.684432Z", "iso8601": "2026-10-26T12:41:03Z", "iso8601_basic": "20261026T124103684432", "iso8601_basic_short": "20261026T124103", "tz": "UTC", "tz_dst": "UTC", "tz_offset": "+0000"}, "ansible_local": {}, "ansible_selinux_python_present": true, "ansible_selinux": {"status": "disabled"}, "ansible_loadavg": {"1m": 0.271484375, "5m": 0.154296875, "15m": 0.40087890625}, "ansible_fips": false, "ansible_processor": ["0", "GenuineIntel", "13th Gen Intel(R) Core(TM) i7-1355U"], "ansible_flags": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "mmx", "fxsr", "sse", "sse2", "ht", "syscall", "nx", "rdtscp", "lm", "constant_tsc", "rep_good", "nopl", "xtopology", "nonstop_tsc", "cpuid", "tsc_known_freq", "pni", "pclmulqdq", "ssse3", "fma", "cx16", "pcid", "sse4_1", "sse4_2", "movbe", "popcnt", "aes", "xsave", "avx", "f16c", "rdrand", "hypervisor", "lahf_lm", "abm", "3dnowprefetch", "ibrs_enhanced", "fsgsbase", "bmi1", "avx2", "bmi2", "invpcid", "rdseed", "adx", "clflushopt", "sha_ni", "arat", "md_clear", "flush_l1d", "arch_capabilities"], "ansible_processor_count": 1, "ansible_processor_cores": 1, "ansible_processor_threads_per_core": 1, "ansible_processor_vcpus": 1, "ansible_processor_nproc": 1, "ansible_memtotal_mb": 1968, "ansible_memfree_mb": 993, "ansible_swaptotal_mb": 2971, "ansible_swapfree_mb": 2971, "ansible_memory_mb": {"real": {"total": 1968, "used": 975, "free": 993}, "nocache": {"free": 1626, "used": 342}, "swap": {"total": 2971, "free": 2971, "used": 0, "cached": 0}}, "ansible_bios_date": "12/01/2006", "ansible_bios_vendor": "innotek GmbH", "ansible_bios_version": "VirtualBox", "ansible_board_asset_tag": "NA", "ansible_board_name": "VirtualBox", "ansible_board_serial": "0", "ansible_board_vendor": "Oracle Corporation", "ansible_board_version": "1.2", "ansible_chassis_asset_tag": "NA", "ansible_chassis_serial": "NA", "ansible_chassis_vendor": "Oracle Corporation", "ansible_chassis_version": "NA", "ansible_form_factor": "Other", "ansible_product_name": "VirtualBox", "ansible_product_serial": "VirtualBox-7dd1618c-1a06-47dc-b252-11b32ee2298a", "ansible_product_uuid": "8c61d17d-061a-dc47-b252-11b32ee2298a", "ansible_product_version": "1.2", "ansible_system_vendor": "innotek GmbH", "ansible_devices": {"loop1": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop6": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop4": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop2": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop0": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "4096", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "dm-0": {"virtual": 1, "links": {"ids": ["dm-name-ubuntu--vg-ubuntu--lv", "dm-uuid-LVM-NZGKxWDOlEtVYowX6ENyvhgdKoPp9mR0ft4hDK52ZzWhFMdnFM02xJc1pqS1q2QK"], "uuids": ["f7c9605e-e389-4b7a-ac33-681c3d6cca46"], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "serial": "VB02997fa9", "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "", "sectorsize": "512", "sectors": 65003520, "size": "31.00 GB", "host": "", "holders": []}, "loop7": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "sda": {"virtual": 1, "links": {"ids": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e"], "uuids": [], "labels": [], "masters": []}, "vendor": "ATA", "model": "VBOX HARDDISK", "sas_address": null, "sas_device_handle": null, "serial": "VB02997fa9", "removable": "0", "support_discard": "0", "partitions": {"sda2": {"links": {"ids": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2"], "uuids": ["faa6fb15-30f8-41f3-be06-314a34d8f020"], "labels": [], "masters": []}, "start": "4096", "sectorsize": 512, "sectors": 4194304, "size": "2.00 GB", "uuid": "faa6fb15-30f8-41f3-be06-314a34d8f020", "holders": []}, "sda3": {"links": {"ids": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "lvm-pv-uuid-85zsUx-fNCJ-GLnq-MgRe-PINQ-d3NB-b1QMdf", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3"], "uuids": [], "labels": [], "masters": ["dm-0"]}, "start": "4198400", "sectorsize": 512, "sectors": 130017280, "size": "62.00 GB", "uuid": null, "holders": ["ubuntu--vg-ubuntu--lv"]}, "sda1": {"links": {"ids": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1"], "uuids": [], "labels": [], "masters": []}, "start": "2048", "sectorsize": 512, "sectors": 2048, "size": "1.00 MB", "uuid": null, "holders": []}}, "rotational": "1", "scheduler_mode": "mq-deadline", "sectorsize": "512", "sectors": 134217728, "size": "64.00 GB", "host": "SATA controller: Intel Corporation 82801HM/HEM (ICH8M/ICH8M-E) SATA Controller [AHCI mode] (rev 02)", "holders": []}, "loop5": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}, "loop3": {"virtual": 1, "links": {"ids": [], "uuids": [], "labels": [], "masters": []}, "vendor": null, "model": null, "sas_address": null, "sas_device_handle": null, "removable": "0", "support_discard": "0", "partitions": {}, "rotational": "1", "scheduler_mode": "none", "sectorsize": "512", "sectors": 0, "size": "0.00 Bytes", "host": "", "holders": []}}, "ansible_device_links": {"ids": {"dm-0": ["dm-name-ubuntu--vg-ubuntu--lv", "dm-uuid-LVM-NZGKxWDOlEtVYowX6ENyvhgdKoPp9mR0ft4hDK52ZzWhFMdnFM02xJc1pqS1q2QK"], "sda3": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "lvm-pv-uuid-85zsUx-fNCJ-GLnq-MgRe-PINQ-d3NB-b1QMdf", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part3"], "sda1": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part1"], "sda2": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e-part2"], "sda": ["ata-VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-0ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-1ATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e", "scsi-SATA_VBOX_HARDDISK_VB02997fa9-3ace1f7e"]}, "uuids": {"dm-0": ["f7c9605e-e389-4b7a-ac33-681c3d6cca46"], "sda2": ["faa6fb15-30f8-41f3-be06-314a34d8f020"]}, "labels": {}, "masters": {"sda3": ["dm-0"]}}, "ansible_uptime_seconds": 2444, "ansible_lvm": {"lvs": {"ubuntu-lv": {"size_g": "31.00", "vg": "ubuntu-vg"}}, "vgs": {"ubuntu-vg": {"size_g": "62.00", "free_g": "31.00", "num_lvs": "1", "num_pvs": "1", "lvs": {"ubuntu-lv": {"size_g": "31.00"}}}}, "pvs": {"/dev/sda3": {"size_g": "62.00", "free_g": "31.00", "vg": "ubuntu-vg"}}}, "ansible_mounts": [{"mount": "/", "device": "/dev/mapper/ubuntu--vg-ubuntu--lv", "fstype": "ext4", "options": "rw,relatime", "dump": 0, "passno": 0, "size_total": 32574881792, "size_available": 21417971712, "block_size": 4096, "block_total": 7952852, "block_available": 5228997, "block_used": 2723855, "inode_total": 2031616, "inode_available": 1936642, "inode_used": 94974, "uuid": "f7c9605e-e389-4b7a-ac33-681c3d6cca46"}, {"mount": "/boot", "device": "/dev/sda2", "fstype": "ext4", "options": "rw,relatime", "dump": 0, "passno": 0, "size_total": 2040373248, "size_available": 1808904192, "block_size": 4096, "block_total": 498138, "block_available": 441627, "block_used": 56511, "inode_total": 131072, "inode_available": 130755, "inode_used": 317, "uuid": "faa6fb15-30f8-41f3-be06-314a34d8f020"}], "ansible_pkg_mgr": "apt", "ansible_python": {"version": {"major": 3, "minor": 12, "micro": 3, "releaselevel": "final", "serial": 0}, "version_info": [3, 12, 3, "final", 0], "executable": "/usr/bin/python3.12", "has_sslcontext": true, "type": "cpython"}, "ansible_interfaces": ["lo", "eth0", "eth1"], "ansible_eth0": {"device": "eth0", "macaddress": "08:00:27:f8:c2:eb", "mtu": 1500, "active": true, "module": "e1000", "type": "ether", "pciid": "0000:00:03.0", "speed": 1000, "promisc": false, "ipv4": {"address": "10.0.2.15", "broadcast": "", "netmask": "255.255.255.0", "network": "10.0.2.0", "prefix": "24"}, "ipv6": [{"address": "fd17:625c:f037:2:a00:27ff:fef8:c2eb", "prefix": "64", "scope": "global"}, {"address": "fe80::a00:27ff:fef8:c2eb", "prefix": "64", "scope": "link"}], "features": {"rx_checksumming": "off", "tx_checksumming": "on", "tx_checksum_ipv4": "off [fixed]", "tx_checksum_ip_generic": "on", "tx_checksum_ipv6": "off [fixed]", "tx_checksum_fcoe_crc": "off [fixed]", "tx_checksum_sctp": "off [fixed]", "scatter_gather": "on", "tx_scatter_gather": "on", "tx_scatter_gather_fraglist": "off [fixed]", "tcp_segmentation_offload": "on", "tx_tcp_segmentation": "on", "tx_tcp_ecn_segmentation": "off [fixed]", "tx_tcp_mangleid_segmentation": "off", "tx_tcp6_segmentation": "off [fixed]", "generic_segmentation_offload": "on", "generic_receive_offload": "on", "large_receive_offload": "off [fixed]", "rx_vlan_offload": "on", "tx_vlan_offload": "on [fixed]", "ntuple_filters": "off [fixed]", "receive_hashing": "off [fixed]", "highdma": "off [fixed]", "rx_vlan_filter": "on [fixed]", "vlan_challenged": "off [fixed]", "tx_lockless": "off [fixed]", "netns_local": "off [fixed]", "tx_gso_robust": "off [fixed]", "tx_fcoe_segmentation": "off [fixed]", "tx_gre_segmentation": "off [fixed]", "tx_gre_csum_segmentation": "off [fixed]", "tx_ipxip4_segmentation": "off [fixed]", "tx_ipxip6_segmentation": "off [fixed]", "tx_udp_tnl_segmentation": "off [fixed]", "tx_udp_tnl_csum_segmentation": "off [fixed]", "tx_gso_partial": "off [fixed]", "tx_tunnel_remcsum_segmentation": "off [fixed]", "tx_sctp_segmentation": "off [fixed]", "tx_esp_segmentation": "off [fixed]", "tx_udp_segmentation": "off [fixed]", "tx_gso_list": "off [fixed]", "fcoe_mtu": "off [fixed]", "tx_nocache_copy": "off", "loopback": "off [fixed]", "rx_fcs": "off", "rx_all": "off", "tx_vlan_stag_hw_insert": "off [fixed]", "rx_vlan_stag_hw_parse": "off [fixed]", "rx_vlan_stag_filter": "off [fixed]", "l2_fwd_offload": "off [fixed]", "hw_tc_offload": "off [fixed]", "esp_hw_offload": "off [fixed]", "esp_tx_csum_hw_offload": "off [fixed]", "rx_udp_tunnel_port_offload": "off [fixed]", "tls_hw_tx_offload": "off [fixed]", "tls_hw_rx_offload": "off [fixed]", "rx_gro_hw": "off [fixed]", "tls_hw_record": "off [fixed]", "rx_gro_list": "off", "macsec_hw_offload": "off [fixed]", "rx_udp_gro_forwarding": "off", "hsr_tag_ins_offload": "off [fixed]", "hsr_tag_rm_offload": "off [fixed]", "hsr_fwd_offload": "off [fixed]", "hsr_dup_offload": "off [fixed]"}, "timestamping": [], "hw_timestamp_filters": []}, "ansible_lo": {"device": "lo", "mtu": 65536, "active": true, "type": "loopback", "promisc": false, "ipv4": {"address": "127.0.0.1", "broadcast": "", "netmask": "255.0.0.0", "network": "127.0.0.0", "prefix": "8"}, "ipv6": [{"address": "::1", "prefix": "128", "scope": "host"}], "features": {"rx_checksumming": "on [fixed]", "tx_checksumming": "on", "tx_checksum_ipv4": "off [fixed]", "tx_checksum_ip_generic": "on [fixed]", "tx_checksum_ipv6": "off [fixed]", "tx_checksum_fcoe_crc": "off [fixed]", "tx_checksum_sctp": "on [fixed]", "scatter_gather": "on", "tx_scatter_gather": "on [fixed]", "tx_scatter_gather_fraglist": "on [fixed]", "tcp_segmentation_offload": "on", "tx_tcp_segmentation": "on", "tx_tcp_ecn_segmentation": "on", "tx_tcp_mangleid_segmentation": "on", "tx_tcp6_segmentation": "on", "generic_segmentation_offload": "on", "generic_receive_offload": "on", "large_receive_offload": "off [fixed]", "rx_vlan_offload": "off [fixed]", "tx_vlan_offload": "off [fixed]", "ntuple_filters": "off [fixed]", "receive_hashing": "off [fixed]", "highdma": "on [fixed]", "rx_vlan_filter": "off [fixed]", "vlan_challenged": "on [fixed]", "tx_lockless": "on [fixed]", "netns_local": "on [fixed]", "tx_gso_robust": "off [fixed]", "tx_fcoe_segmentation": "off [fixed]", "tx_gre_segmentation": "off [fixed]", "tx_gre_csum_segmentation": "off [fixed]", "tx_ipxip4_segmentation": "off [fixed]", "tx_ipxip6_segmentation": "off [fixed]", "tx_udp_tnl_segmentation": "off [fixed]", "tx_udp_tnl_csum_segmentation": "off [fixed]", "tx_gso_partial": "off [fixed]", "tx_tunnel_remcsum_segmentation": "off [fixed]", "tx_sctp_segmentation": "on", "tx_esp_segmentation": "off [fixed]", "tx_udp_segmentation": "on", "tx_gso_list": "on", "fcoe_mtu": "off [fixed]", "tx_nocache_copy": "off [fixed]", "loopback": "on [fixed]", "rx_fcs": "off [fixed]", "rx_all": "off [fixed]", "tx_vlan_stag_hw_insert": "off [fixed]", "rx_vlan_stag_hw_parse": "off [fixed]", "rx_vlan_stag_filter": "off [fixed]", "l2_fwd_offload": "off [fixed]", "hw_tc_offload": "off [fixed]", "esp_hw_offload": "off [fixed]", "esp_tx_csum_hw_offload": "off [fixed]", "rx_udp_tunnel_port_offload": "off [fixed]", "tls_hw_tx_offload": "off [fixed]", "tls_hw_rx_offload": "off [fixed]", "rx_gro_hw": "off [fixed]", "tls_hw_record": "off [fixed]", "rx_gro_list": "off", "macsec_hw_offload": "off [fixed]", "rx_udp_gro_forwarding": "off", "hsr_tag_ins_offload": "off [fixed]", "hsr_tag_rm_offload": "off [fixed]", "hsr_fwd_offload": "off [fixed]", "hsr_dup_offload": "off [fixed]"}, "timestamping": [], "hw_timestamp_filters": []}, "ansible_eth1": {"device": "eth1", "macaddress": "08:00:27:37:6e:e8", "mtu": 1500, "active": true, "module": "e1000", "type": "ether", "pciid": "0000:00:08.0", "speed": 1000, "promisc": false, "ipv4": {"address": "192.168.0.254", "broadcast": "192.168.0.255", "netmask": "255.255.255.0", "network": "192.168.0.0", "prefix": "24"}, "ipv6": [{"address": "fe80::a00:27ff:fe37:6ee8", "prefix": "64", "scope": "link"}], "features": {"rx_checksumming": "off", "tx_checksumming": "on", "tx_checksum_ipv4": "off [fixed]", "tx_checksum_ip_generic": "on", "tx_checksum_ipv6": "off [fixed]", "tx_checksum_fcoe_crc": "off [fixed]", "tx_checksum_sctp": "off [fixed]", "scatter_gather": "on", "tx_scatter_gather": "on", "tx_scatter_gather_fraglist": "off [fixed]", "tcp_segmentation_offload": "on", "tx_tcp_segmentation": "on", "tx_tcp_ecn_segmentation": "off [fixed]", "tx_tcp_mangleid_segmentation": "off", "tx_tcp6_segmentation": "off [fixed]", "generic_segmentation_offload": "on", "generic_receive_offload": "on", "large_receive_offload": "off [fixed]", "rx_vlan_offload": "on", "tx_vlan_offload": "on [fixed]", "ntuple_filters": "off [fixed]", "receive_hashing": "off [fixed]", "highdma": "off [fixed]", "rx_vlan_filter": "on [fixed]", "vlan_challenged": "off [fixed]", "tx_lockless": "off [fixed]", "netns_local": "off [fixed]", "tx_gso_robust": "off [fixed]", "tx_fcoe_segmentation": "off [fixed]", "tx_gre_segmentation": "off [fixed]", "tx_gre_csum_segmentation": "off [fixed]", "tx_ipxip4_segmentation": "off [fixed]", "tx_ipxip6_segmentation": "off [fixed]", "tx_udp_tnl_segmentation": "off [fixed]", "tx_udp_tnl_csum_segmentation": "off [fixed]", "tx_gso_partial": "off [fixed]", "tx_tunnel_remcsum_segmentation": "off [fixed]", "tx_sctp_segmentation": "off [fixed]", "tx_esp_segmentation": "off [fixed]", "tx_udp_segmentation": "off [fixed]", "tx_gso_list": "off [fixed]", "fcoe_mtu": "off [fixed]", "tx_nocache_copy": "off", "loopback": "off [fixed]", "rx_fcs": "off", "rx_all": "off", "tx_vlan_stag_hw_insert": "off [fixed]", "rx_vlan_stag_hw_parse": "off [fixed]", "rx_vlan_stag_filter": "off [fixed]", "l2_fwd_offload": "off [fixed]", "hw_tc_offload": "off [fixed]", "esp_hw_offload": "off [fixed]", "esp_tx_csum_hw_offload": "off [fixed]", "rx_udp_tunnel_port_offload": "off [fixed]", "tls_hw_tx_offload": "off [fixed]", "tls_hw_rx_offload": "off [fixed]", "rx_gro_hw": "off [fixed]", "tls_hw_record": "off [fixed]", "rx_gro_list": "off", "macsec_hw_offload": "off [fixed]", "rx_udp_gro_forwarding": "off", "hsr_tag_ins_offload": "off [fixed]", "hsr_tag_rm_offload": "off [fixed]", "hsr_fwd_offload": "off [fixed]", "hsr_dup_offload": "off [fixed]"}, "timestamping": [], "hw_timestamp_filters": []}, "ansible_default_ipv4": {"gateway": "10.0.2.2", "interface": "eth0", "address": "10.0.2.15", "broadcast": "", "netmask": "255.255.255.0", "network": "10.0.2.0", "prefix": "24", "macaddress": "08:00:27:f8:c2:eb", "mtu": 1500, "type": "ether", "alias": "eth0"}, "ansible_default_ipv6": {"gateway": "fe80::2", "interface": "eth0", "address": "fd17:625c:f037:2:a00:27ff:fef8:c2eb", "prefix": "64", "scope": "global", "macaddress": "08:00:27:f8:c2:eb", "mtu": 1500, "type": "ether"}, "ansible_all_ipv4_addresses": ["10.0.2.15", "192.168.0.254"], "ansible_all_ipv6_addresses": ["fd17:625c:f037:2:a00:27ff:fef8:c2eb", "fe80::a00:27ff:fef8:c2eb", "fe80::a00:27ff:fe37:6ee8"], "ansible_locally_reachable_ips": {"ipv4": ["10.0.2.15", "127.0.0.0/8", "127.0.0.1", "192.168.0.254"], "ipv6": ["::1", "fd17:625c:f037:2:a00:27ff:fef8:c2eb", "fe80::a00:27ff:fe37:6ee8", "fe80::a00:27ff:fef8:c2eb"]}, "ansible_virtualization_role": "guest", "ansible_virtualization_type": "virtualbox", "ansible_virtualization_tech_guest": ["virtualbox"], "ansible_virtualization_tech_host": [], "ansible_lsb": {"id": "Ubuntu", "description": "Ubuntu 24.04.3 LTS", "release": "24.04", "codename": "noble", "major_release": "24"}, "ansible_dns": {"nameservers": ["127.0.0.53"], "options": {"edns0": true, "trust-ad": true}, "search": ["."]}, "ansible_systemd": {"features": "+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified", "version": 255}, "ansible_service_mgr": "systemd", "ansible_cmdline": {"BOOT_IMAGE": "/vmlinuz-6.8.0-86-generic", "root": "/dev/mapper/ubuntu--vg-ubuntu--lv", "ro": true, "net.ifnames": "0", "biosdevname": "0", "autoinstall": true, "ds": "nocloud-net"}, "ansible_proc_cmdline": {"BOOT_IMAGE": "/vmlinuz-6.8.0-86-generic", "root": "/dev/mapper/ubuntu--vg-ubuntu--lv", "ro": true, "net.ifnames": "0", "biosdevname": "0", "autoinstall": true, "ds": "nocloud-net"}, "gather_subset": ["all"], "module_setup": true}}\r\n', b'Shared connection to 192.168.0.254 closed.\r\n')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'rm -f -r /home/ansible/.ansible/tmp/ansible-tmp-1793018461.6533031-4115-159267252604565/ > /dev/null 2>&1'"'"''
+<192.168.0.10> (0, b'', b'')
+[WARNING]: Host 'pxe_client' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_client]
+<192.168.0.254> (0, b'', b'')
+[WARNING]: Host 'pxe_server' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [pxe_server]
+
+TASK [installApache : debug] *************************************************************************************************
+task path: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/main.yml:2
+ok: [pxe_server] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+ok: [pxe_client] => {
+    "msg": "Running tasks for  OS Family: Debian"
+}
+
+TASK [installApache : Load OS specific tasks (RHEL)] *************************************************************************
+task path: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/main.yml:5
+skipping: [pxe_server] => {
+    "changed": false,
+    "false_condition": "ansible_facts[\"os_family\"] == 'RedHat'",
+    "skip_reason": "Conditional result was False"
+}
+skipping: [pxe_client] => {
+    "changed": false,
+    "false_condition": "ansible_facts[\"os_family\"] == 'RedHat'",
+    "skip_reason": "Conditional result was False"
+}
+
+TASK [installApache : Load OS specific tasks (Debian)] ***********************************************************************
+task path: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/main.yml:9
+included: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml for pxe_server, pxe_client
+
+TASK [installApache : install apache2] ***************************************************************************************
+task path: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:3
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'echo ~ansible'"'"''
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'echo ~ansible'"'"''
+<192.168.0.254> (0, b'/home/ansible\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'( umask 77 && mkdir -p "` echo /home/ansible/.ansible/tmp `"&& mkdir "` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754 `" && echo ansible-tmp-1793018466.2255452-4286-185096085569754="` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754 `" )'"'"''
+<192.168.0.10> (0, b'/home/ansible\n', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'( umask 77 && mkdir -p "` echo /home/ansible/.ansible/tmp `"&& mkdir "` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510 `" && echo ansible-tmp-1793018466.260985-4287-60314996793510="` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510 `" )'"'"''
+<192.168.0.10> (0, b'ansible-tmp-1793018466.260985-4287-60314996793510=/home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510\n', b'')
+<192.168.0.254> (0, b'ansible-tmp-1793018466.2255452-4286-185096085569754=/home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754\n', b'')
+Using module file /usr/lib/python3/dist-packages/ansible/modules/apt.py
+<192.168.0.10> PUT /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpf0zr8ss1 TO /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/AnsiballZ_apt.py
+<192.168.0.10> SSH: EXEC sftp -o BatchMode=no -b - -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 '[192.168.0.10]'
+Using module file /usr/lib/python3/dist-packages/ansible/modules/apt.py
+<192.168.0.254> PUT /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpkvqnldfu TO /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/AnsiballZ_apt.py
+<192.168.0.254> SSH: EXEC sftp -o BatchMode=no -b - -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 '[192.168.0.254]'
+<192.168.0.254> (0, b'sftp> put /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpkvqnldfu /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/AnsiballZ_apt.py\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'chmod u+rwx /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/ /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/AnsiballZ_apt.py'"'"''
+<192.168.0.10> (0, b'sftp> put /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpf0zr8ss1 /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/AnsiballZ_apt.py\n', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'chmod u+rwx /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/ /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/AnsiballZ_apt.py'"'"''
+<192.168.0.254> (0, b'', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 -tt 192.168.0.254 '/bin/sh -c '"'"'sudo -H -S -n  -u root /bin/sh -c '"'"'"'"'"'"'"'"'echo BECOME-SUCCESS-tdmqpeiaoqzeqbzeaccokipatgripmak ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/AnsiballZ_apt.py'"'"'"'"'"'"'"'"''"'"''
+<192.168.0.10> (0, b'', b'')
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 -tt 192.168.0.10 '/bin/sh -c '"'"'sudo -H -S -n  -u root /bin/sh -c '"'"'"'"'"'"'"'"'echo BECOME-SUCCESS-wpiljgsbbccgynzmpqtqzvvxbhroltfj ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/AnsiballZ_apt.py'"'"'"'"'"'"'"'"''"'"''
+<192.168.0.254> Escalation succeeded
+<192.168.0.10> Escalation succeeded
+<192.168.0.254> (0, b'\r\n\r\n{"changed": false, "cache_updated": false, "cache_update_time": 1761259310}\r\n', b'Shared connection to 192.168.0.254 closed.\r\n')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'rm -f -r /home/ansible/.ansible/tmp/ansible-tmp-1793018466.2255452-4286-185096085569754/ > /dev/null 2>&1'"'"''
+<192.168.0.254> (0, b'', b'')
+ok: [pxe_server] => {
+    "cache_update_time": 1761259310,
+    "cache_updated": false,
+    "changed": false
+}
+<192.168.0.10> (1, b'\r\n/usr/lib/python3/dist-packages/apt/cache.py:562: Warning: W:Failed to fetch http://archive.ubuntu.com/ubuntu/dists/noble/InRelease  Temporary failure resolving \'archive.ubuntu.com\', W:Failed to fetch http://archive.ubuntu.com/ubuntu/dists/noble-updates/InRelease  Temporary failure resolving \'archive.ubuntu.com\', W:Failed to fetch http://archive.ubuntu.com/ubuntu/dists/noble-backports/InRelease  Temporary failure resolving \'archive.ubuntu.com\', W:Failed to fetch http://security.ubuntu.com/ubuntu/dists/noble-security/InRelease  Temporary failure resolving \'security.ubuntu.com\', W:Some index files failed to download. They have been ignored, or old ones used instead.\r\n  res = self._cache.update(fetch_progress, slist, pulse_interval)\r\n\r\n{"failed": true, "msg": "Failed to update apt cache after 5 retries: ", "warnings": [{"event": {"msg": "Failed to update cache after 1 retries due to , retrying", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Sleeping for 2 seconds, before attempting to refresh the cache again", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Failed to update cache after 2 retries due to , retrying", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Sleeping for 3 seconds, before attempting to refresh the cache again", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Failed to update cache after 3 retries due to , retrying", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Sleeping for 5 seconds, before attempting to refresh the cache again", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Failed to update cache after 4 retries due to , retrying", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Sleeping for 9 seconds, before attempting to refresh the cache again", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Failed to update cache after 5 retries due to , retrying", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}, {"event": {"msg": "Sleeping for 13 seconds, before attempting to refresh the cache again", "__ansible_type": "Event"}, "__ansible_type": "WarningSummary"}]}\r\n', b'Shared connection to 192.168.0.10 closed.\r\n')
+<192.168.0.10> Failed to connect to the host via ssh: Shared connection to 192.168.0.10 closed.
+<192.168.0.10> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.10> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/bd6ea1d8f0"' -o NumberOfPasswordPrompts=1 192.168.0.10 '/bin/sh -c '"'"'rm -f -r /home/ansible/.ansible/tmp/ansible-tmp-1793018466.260985-4287-60314996793510/ > /dev/null 2>&1'"'"''
+<192.168.0.10> (0, b'', b'')
+[WARNING]: Failed to update cache after 1 retries due to , retrying
+[WARNING]: Sleeping for 2 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 2 retries due to , retrying
+[WARNING]: Sleeping for 3 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 3 retries due to , retrying
+[WARNING]: Sleeping for 5 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 4 retries due to , retrying
+[WARNING]: Sleeping for 9 seconds, before attempting to refresh the cache again
+[WARNING]: Failed to update cache after 5 retries due to , retrying
+[WARNING]: Sleeping for 13 seconds, before attempting to refresh the cache again
+[ERROR]: Task failed: Module failed: Failed to update apt cache after 5 retries: 
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:3:7
+
+1 ---
+2
+3     - name: install apache2
+        ^ column 7
+
+fatal: [pxe_client]: FAILED! => {
+    "changed": false,
+    "msg": "Failed to update apt cache after 5 retries: "
+}
+
+TASK [installApache : Start Apache] ******************************************************************************************
+task path: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:10
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'echo ~ansible'"'"''
+<192.168.0.254> (0, b'/home/ansible\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'( umask 77 && mkdir -p "` echo /home/ansible/.ansible/tmp `"&& mkdir "` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025 `" && echo ansible-tmp-1793018920.9423177-4628-63875897164025="` echo /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025 `" )'"'"''
+<192.168.0.254> (0, b'ansible-tmp-1793018920.9423177-4628-63875897164025=/home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025\n', b'')
+Using module file /usr/lib/python3/dist-packages/ansible/modules/systemd.py
+<192.168.0.254> PUT /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpq905a5mw TO /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/AnsiballZ_systemd.py
+<192.168.0.254> SSH: EXEC sftp -o BatchMode=no -b - -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 '[192.168.0.254]'
+<192.168.0.254> (0, b'sftp> put /home/ansible/.ansible/tmp/ansible-local-4108aokf8tz8/tmpq905a5mw /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/AnsiballZ_systemd.py\n', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'chmod u+rwx /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/ /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/AnsiballZ_systemd.py'"'"''
+<192.168.0.254> (0, b'', b'')
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 -tt 192.168.0.254 '/bin/sh -c '"'"'sudo -H -S -n  -u root /bin/sh -c '"'"'"'"'"'"'"'"'echo BECOME-SUCCESS-qzbyfihpbogjbavdjbqxiivriopxofkc ; /usr/bin/python3.12 /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/AnsiballZ_systemd.py'"'"'"'"'"'"'"'"''"'"''
+<192.168.0.254> Escalation succeeded
+<192.168.0.254> (1, b'\r\n\r\n{"failed": true, "msg": "Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.\\nSee \\"systemctl status apache2.service\\" and \\"journalctl -xeu apache2.service\\" for details.\\n"}\r\n', b'Shared connection to 192.168.0.254 closed.\r\n')
+<192.168.0.254> Failed to connect to the host via ssh: Shared connection to 192.168.0.254 closed.
+<192.168.0.254> ESTABLISH SSH CONNECTION FOR USER: ansible
+<192.168.0.254> SSH: EXEC ssh -C -o ControlMaster=auto -o ControlPersist=60s -o 'User="ansible"' -o ConnectTimeout=10 -o 'ControlPath="/home/ansible/.ansible/cp/84928ba9e1"' -o NumberOfPasswordPrompts=1 192.168.0.254 '/bin/sh -c '"'"'rm -f -r /home/ansible/.ansible/tmp/ansible-tmp-1793018920.9423177-4628-63875897164025/ > /dev/null 2>&1'"'"''
+<192.168.0.254> (0, b'', b'')
+[ERROR]: Task failed: Module failed: Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.
+See "systemctl status apache2.service" and "journalctl -xeu apache2.service" for details.
+
+Origin: /vagrant/ansible/project-ansible2-2/roles/installApache/tasks/Debian.yml:10:7
+
+ 8       become: true
+ 9
+10     - name: Start Apache
+         ^ column 7
+
+fatal: [pxe_server]: FAILED! => {
+    "changed": false,
+    "msg": "Unable to start service apache2: Job for apache2.service failed because the control process exited with error code.\nSee \"systemctl status apache2.service\" and \"journalctl -xeu apache2.service\" for details.\n"
+}
+
+PLAY RECAP *******************************************************************************************************************
+pxe_client                 : ok=3    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+pxe_server                 : ok=4    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+
+ansible@pxe-server:/vagrant/ansible/project-ansible2-2$ 
+```
