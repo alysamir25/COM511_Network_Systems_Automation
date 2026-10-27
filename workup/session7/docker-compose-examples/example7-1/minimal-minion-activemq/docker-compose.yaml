@@ -1,0 +1,172 @@
+---
+
+# using fixed ip addresses so opennms provisoning config works
+# to see all network use docker network ls
+# to see config use docker network inspect minimal-minion-activemq_N000
+# note gateway is 172.20.0.1 
+networks:
+  N000:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+  N001:
+    ipam:
+      config:
+        - subnet: 172.20.2.0/24
+
+
+volumes:
+  data-postgres: {}
+  data-opennms: {}
+  data-opennms-cfg: {}
+  data-grafana: {}
+
+services:
+
+  database:
+    image: ${DOCKER_REGISTRY:-docker.io}/postgres:${POSTGRES_VERSION:-13}
+    container_name: database
+    hostname: database
+    environment:
+      TZ: ${TIMEZONE:-America/New_York}
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+    networks:
+      N000:
+        ipv4_address: 172.20.0.10
+
+  horizon:
+    image: ${DOCKER_REGISTRY:-docker.io}/${DOCKER_ORG:-opennms}/${HORIZON_OCI:-horizon}:${ONMS_VERSION:-bleeding}
+    container_name: horizon
+    hostname: horizon
+    sysctls:
+      net.ipv4.ping_group_range: "0 429496729"
+    depends_on:
+      - database
+    environment:
+      TZ: ${TIMEZONE:-America/New_York}
+      # JAVA_OPTS matches default in container plus enable debugger
+      # extenal jdb connection from windows using  jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8001
+      JAVA_OPTS: -Xmx1024m -XX:MaxMetaspaceSize=512m -agentlib:jdwp=transport=dt_socket,server=y,address=*:8001,suspend=n
+    volumes:
+      - data-opennms:/opennms-data
+      - data-opennms-cfg:/opt/opennms/etc
+      - ./container-fs/horizon/opt/opennms/deploy:/opt/opennms/deploy
+      - ./container-fs/horizon/opt/opennms-overlay:/opt/opennms-overlay
+      - ./container-fs/horizon/etc/conf.d/confd.toml:/etc/confd/confd.toml
+    command: ["-s"]
+    ports:
+      - "8101:8101/tcp"   # karaf ssh
+      - "8980:8980/tcp"   # web ui
+      - "10162:1162/udp"  # snmp trap
+      - "10514:10514/udp" # syslog
+      #- "61616:61616/tcp" # activemq (commented out because it is not used in this example)
+      - "8990:8990" # grpc
+      - "8001:8001" # JPDA debugging port
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "-I", "http://localhost:8980/opennms/login.jsp" ]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+    networks:
+      N000:
+        ipv4_address: 172.20.0.15
+      
+
+  minion1:
+    image: ${DOCKER_REGISTRY:-docker.io}/${DOCKER_ORG:-opennms}/${MINION_OCI:-minion}:${ONMS_VERSION:-bleeding}
+    container_name: minion1
+    hostname: minion1
+    sysctls:
+      net.ipv4.ping_group_range: "0 429496729"
+    environment:
+      TZ: ${TIMEZONE:-America/New_York}
+      JAVA_MIN_MEM: 512M
+      JAVA_MAX_MEM: 2048M
+    volumes:
+      - './container-fs/minion1/opt/minion/minion-config.yaml:/opt/minion/minion-config.yaml'
+    command: ["-f"]
+    healthcheck:
+      test: "/health.sh"
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "8201:8201/tcp"
+      - "1162:1162/udp"
+      - "1514:1514/udp"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 2560M
+    networks:
+      N000:
+        ipv4_address: 172.20.0.25
+      N001:
+        ipv4_address: 172.20.2.25
+        
+  # snmp containers in network N000
+  netsnmp_1_1:
+    image: polinux/snmpd
+    container_name: netsnmp_1_1
+    hostname: netsnmp_1_1
+    volumes:
+      - ./container-fs/snmp/snmpd.conf:/etc/snmp/snmpd.conf
+    ports:
+      - "11161:161/udp"
+    networks:
+      N000:
+        ipv4_address: 172.20.0.101
+
+  netsnmp_1_2:
+    image: polinux/snmpd
+    container_name: netsnmp_1_2
+    hostname: netsnmp_1_2
+    volumes:
+      - ./container-fs/snmp/snmpd.conf:/etc/snmp/snmpd.conf
+    ports:
+      - "11261:161/udp"
+    networks:
+      N000:
+        ipv4_address: 172.20.0.102
+        
+  # snmp containers in network N001
+  netsnmp_2_1:
+    image: polinux/snmpd
+    container_name: netsnmp_2_1
+    hostname: netsnmp_2_1
+    volumes:
+      - ./container-fs/snmp/snmpd.conf:/etc/snmp/snmpd.conf
+    ports:
+      - "11361:161/udp"
+    networks:
+      N001:
+        ipv4_address: 172.20.2.101
+
+  netsnmp_2_2:
+    image: polinux/snmpd
+    container_name: netsnmp_2_2
+    hostname: netsnmp_2_2
+    volumes:
+      - ./container-fs/snmp/snmpd.conf:/etc/snmp/snmpd.conf
+    ports:
+      - "11461:161/udp"
+    networks:
+      N001:
+        ipv4_address: 172.20.2.102
+
