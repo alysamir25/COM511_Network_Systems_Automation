@@ -1,0 +1,160 @@
+{
+  "environments": [
+    {
+      "env": "{}",
+      "json": "{}",
+      "name": "Empty"
+    }
+  ],
+  "integration_aliases": [],
+  "integrations": [],
+  "inventories": [
+    {
+      "inventory": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleA/inventory.ini",
+      "name": "project-ansibleA-inventory",
+      "ssh_key": "None",
+      "type": "file"
+    },
+    {
+      "inventory": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleB/inventory.ini",
+      "name": "project-ansibleB-inventory",
+      "ssh_key": "None",
+      "type": "file"
+    }
+  ],
+  "keys": [
+    {
+      "name": "None",
+      "owner": "",
+      "type": "none"
+    }
+  ],
+  "meta": {
+    "alert": false,
+    "max_parallel_tasks": 1,
+    "name": "test_project1",
+    "type": ""
+  },
+  "repositories": [
+    {
+      "git_branch": "main",
+      "git_url": "https://github.com/gallenc/COM511_Network_Systems_Automation.git",
+      "name": "COM511_Network_Systems_Automation",
+      "ssh_key": "None"
+    }
+  ],
+  "roles": [],
+  "schedules": [],
+  "secret_storages": [],
+  "templates": [
+    {
+      "allow_override_args_in_task": false,
+      "allow_override_branch_in_task": false,
+      "allow_parallel_tasks": false,
+      "app": "ansible",
+      "arguments": "[]",
+      "autorun": false,
+      "environment": "Empty",
+      "inventory": "project-ansibleA-inventory",
+      "name": "install-apache",
+      "playbook": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleA/install_apache.yml",
+      "repository": "COM511_Network_Systems_Automation",
+      "roles": [],
+      "suppress_success_alerts": false,
+      "survey_vars": [],
+      "task_params": {},
+      "type": "",
+      "vaults": [],
+      "view": "All"
+    },
+    {
+      "allow_override_args_in_task": false,
+      "allow_override_branch_in_task": false,
+      "allow_parallel_tasks": false,
+      "app": "ansible",
+      "arguments": "[]",
+      "autorun": false,
+      "environment": "Empty",
+      "inventory": "project-ansibleB-inventory",
+      "name": "install-apache-with-pass",
+      "playbook": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleB/install_apache_with_pass.yml",
+      "repository": "COM511_Network_Systems_Automation",
+      "roles": [],
+      "suppress_success_alerts": false,
+      "survey_vars": [],
+      "task_params": {},
+      "type": "",
+      "vaults": [],
+      "view": "All"
+    },
+    {
+      "allow_override_args_in_task": false,
+      "allow_override_branch_in_task": false,
+      "allow_parallel_tasks": false,
+      "app": "ansible",
+      "arguments": "[]",
+      "autorun": false,
+      "environment": "Empty",
+      "inventory": "project-ansibleA-inventory",
+      "name": "load-ssh-password",
+      "playbook": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleA/load-ssh-withpass.yml",
+      "repository": "COM511_Network_Systems_Automation",
+      "roles": [],
+      "suppress_success_alerts": false,
+      "survey_vars": [],
+      "task_params": {},
+      "type": "",
+      "vaults": [],
+      "view": "All"
+    },
+    {
+      "allow_override_args_in_task": false,
+      "allow_override_branch_in_task": false,
+      "allow_parallel_tasks": false,
+      "app": "ansible",
+      "arguments": "[]",
+      "autorun": false,
+      "environment": "Empty",
+      "inventory": "project-ansibleA-inventory",
+      "name": "uninstall-apache",
+      "playbook": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleA/uninstall_apache.yml",
+      "repository": "COM511_Network_Systems_Automation",
+      "roles": [],
+      "suppress_success_alerts": false,
+      "survey_vars": [],
+      "task_params": {},
+      "type": "",
+      "vaults": [],
+      "view": "All"
+    },
+    {
+      "allow_override_args_in_task": false,
+      "allow_override_branch_in_task": false,
+      "allow_parallel_tasks": false,
+      "app": "ansible",
+      "arguments": "[]",
+      "autorun": false,
+      "environment": "Empty",
+      "inventory": "project-ansibleB-inventory",
+      "name": "uninstall-apache-with-pass",
+      "playbook": "sessions/session7/docker-compose-examples/example7-2/ansible-semaphore-example/ansible/project-ansibleB/uninstall_apache_with_pass.yml",
+      "repository": "COM511_Network_Systems_Automation",
+      "roles": [],
+      "suppress_success_alerts": false,
+      "survey_vars": [],
+      "task_params": {},
+      "type": "",
+      "vaults": [],
+      "view": "All"
+    }
+  ],
+  "views": [
+    {
+      "hidden": false,
+      "position": 0,
+      "sort_reverse": false,
+      "title": "All",
+      "type": "all"
+    }
+  ]
+}

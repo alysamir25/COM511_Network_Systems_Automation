@@ -1,5 +1,0 @@
-## ansible semaphore example
-
-
-
- 
