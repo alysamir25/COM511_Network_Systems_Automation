@@ -43,11 +43,19 @@ Example:
 
 ## Exercises and results
 *What exercises did you complete. What results. Screen shots and notes*
+* Vagrant built three VMs: `ansible_controller`, `ubuntu_1` (192.168.56.20) and `rocky_1` (192.168.56.30).
+* The first `ansible -i inventory.ini all -m ping` failed on SSH host-key checks. I removed the stale `known_hosts` files and re-ran with `-o StrictHostKeyChecking=no`, which worked.
+
 
 *After vagrant fired up the 3 machines, I did the following:*
-
+* I destroyed and rebuilt the lab (`vagrant destroy`, deleted `.vagrant` and `.ssh-ansible`) to check that it rebuilds from files alone.
+* `playbook-facts-anddebug.yml` first returned `unreachable=1` on every host. Re-run as the `ansible` user, it returned `ok=2 failed=0` on all three.
+* `playbook-all-apache.yml` installed Apache on Ubuntu and Rocky Linux: `failed=0`, with `changed=4` on Rocky and `changed=2` on Ubuntu.
 
 
 
 ## Summary of learning
 *What did you learn through these exercises*
+* One playbook can configure two Linux families, but package names differ (apache2 / httpd), so tasks need OS conditions.
+* Most failures were about access (host keys, wrong user), not the playbook itself. SSH trust has to be set up before automation can work.
+* Disabling host-key checking is fine in a throw-away lab only. In production it removes protection against a spoofed server.
